@@ -22,7 +22,7 @@ if ( empty( $product ) || ! $product->is_visible() ) {
     do_action( 'woocommerce_before_shop_loop_item' );
     ?>
 
-    <div class="relative overflow-hidden rounded-lg bg-brand-cream aspect-[3/4] mb-3">
+    <div class="relative overflow-hidden rounded-lg bg-brand-cream aspect-[4/4] mb-3">
         <?php
         /**
          * Hook: woocommerce_before_shop_loop_item_title.
@@ -48,15 +48,9 @@ if ( empty( $product ) || ! $product->is_visible() ) {
         <button class="add-to-wishlist absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-600 hover:text-red-500 transition shadow-sm <?php echo $in_wishlist ? 'in-wishlist' : ''; ?>" data-product-id="<?php echo esc_attr( $product->get_id() ); ?>">
             <i class="heart-icon <?php echo $in_wishlist ? 'fas' : 'far'; ?> fa-heart"></i>
         </button>
-
+        <!-- now i do not want add to cart i want buy now button in below price -->
         <!-- Add to Cart -->
-        <div class="add-to-cart absolute bottom-0 left-0 right-0 p-3">
-            <?php
-            woocommerce_template_loop_add_to_cart( array(
-                'class' => 'button w-full bg-brand-dark text-white py-2 rounded-full text-sm font-semibold hover:bg-brand-gold transition text-center block !text-white',
-            ) );
-            ?>
-        </div>
+        
     </div>
 
     <div class="product-info">
@@ -72,6 +66,16 @@ if ( empty( $product ) || ! $product->is_visible() ) {
          * @hooked woocommerce_template_loop_price - 10
          */
         do_action( 'woocommerce_after_shop_loop_item_title' );
+
+        // Buy now button
+        if ( ! $product->is_type( 'variable' ) ) {
+            $link = sprintf(
+                '<a href="%s" class="buy-now-button w-full bg-brand-gold text-white py-2 rounded-full text-sm font-semibold hover:bg-brand-dark transition text-center block !text-white mt-2">%s</a>',
+                esc_url( add_query_arg( 'buy-now', $product->get_id(), wc_get_checkout_url() ) ),
+                esc_html__( 'Buy Now', 'fastest_fj' )
+            );
+            echo $link;
+        }
         ?>
     </div>
 

@@ -161,7 +161,7 @@ add_filter( 'loop_shop_per_page', 'fastest_fj_products_per_page', 20 );
  * WooCommerce Product Loop - Columns
  */
 function fastest_fj_loop_columns() {
-    return 3;
+    return 4;
 }
 add_filter( 'loop_shop_columns', 'fastest_fj_loop_columns', 20 );
 
@@ -208,7 +208,7 @@ function fastest_fj_loop_product_thumbnail() {
     $image_html = wp_get_attachment_image( $image_id, $image_size, false, array(
         'class' => 'product-img w-full h-full object-cover transition duration-500',
     ) );
-    echo '<div class="relative overflow-hidden rounded-lg bg-brand-cream aspect-[3/4] mb-3">';
+    echo '<div class="relative overflow-hidden rounded-lg bg-brand-cream aspect-[4/4] mb-3">';
     echo $image_html;
     // Sale badge
     if ( $product->is_on_sale() ) {
@@ -222,8 +222,8 @@ function fastest_fj_loop_product_thumbnail() {
     // Wishlist button
     echo '<button class="add-to-wishlist absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-600 hover:text-red-500 transition shadow-sm" data-product-id="' . esc_attr( $product->get_id() ) . '"><i class="heart-icon far fa-heart"></i></button>';
     // Quick add overlay
-    echo '<div class="add-to-cart absolute bottom-0 left-0 right-0 p-3">';
-    echo '</div>';
+    //echo '<div class="add-to-cart absolute bottom-0 left-0 right-0 p-3">';
+    //echo '</div>';
     echo '</div>';
 }
 remove_action( 'woocommerce_before_shop_loop_item_title', 'woocommerce_show_product_loop_sale_flash', 10 );
@@ -262,9 +262,9 @@ remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_ad
  */
 function fastest_fj_loop_add_to_cart() {
     global $product;
-    echo '<div class="add-to-cart absolute bottom-0 left-0 right-0 p-3">';
-    echo '<a href="' . esc_url( $product->add_to_cart_url() ) . '" data-product_id="' . esc_attr( $product->get_id() ) . '" data-quantity="1" class="ajax_add_to_cart button w-full bg-brand-dark text-white py-2 rounded-full text-sm font-semibold hover:bg-brand-gold transition text-center block">' . esc_html( $product->add_to_cart_text() ) . '</a>';
-    echo '</div>';
+    // echo '<div class="add-to-cart absolute bottom-0 left-0 right-0 p-3">';
+    // echo '<a href="' . esc_url( $product->add_to_cart_url() ) . '" data-product_id="' . esc_attr( $product->get_id() ) . '" data-quantity="1" class="ajax_add_to_cart button w-full bg-brand-dark text-white py-2 rounded-full text-sm font-semibold hover:bg-brand-gold transition text-center block">' . esc_html( $product->add_to_cart_text() ) . '</a>';
+    // echo '</div>';
 }
 add_action( 'woocommerce_after_shop_loop_item', 'fastest_fj_loop_add_to_cart', 10 );
 

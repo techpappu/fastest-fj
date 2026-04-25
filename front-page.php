@@ -136,30 +136,8 @@ $hero_bg = get_theme_mod( 'fastest_fj_hero_bg', '' );
                 <?php foreach ( $new_products as $product ) : setup_postdata( $GLOBALS['post'] =& get_post( $product->get_id() ) ); ?>
                 <div <?php wc_product_class( 'product-card group', $product ); ?>>
                     <?php
-                    /**
-                     * Hook: woocommerce_before_shop_loop_item.
-                     */
-                    do_action( 'woocommerce_before_shop_loop_item' );
-
-                    /**
-                     * Hook: woocommerce_before_shop_loop_item_title.
-                     */
-                    do_action( 'woocommerce_before_shop_loop_item_title' );
-
-                    /**
-                     * Hook: woocommerce_shop_loop_item_title.
-                     */
-                    do_action( 'woocommerce_shop_loop_item_title' );
-
-                    /**
-                     * Hook: woocommerce_after_shop_loop_item_title.
-                     */
-                    do_action( 'woocommerce_after_shop_loop_item_title' );
-
-                    /**
-                     * Hook: woocommerce_after_shop_loop_item.
-                     */
-                    do_action( 'woocommerce_after_shop_loop_item' );
+                       wc_get_template_part( 'content', 'product' );
+                        
                     ?>
                 </div>
                 <?php endforeach; wp_reset_postdata(); ?>
