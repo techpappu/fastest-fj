@@ -1,0 +1,23 @@
+/**
+ * fastest_fj Admin Styles
+ */
+
+.fastest_fj-meta-box {
+    padding: 10px 0;
+}
+
+.fastest_fj-meta-box .field {
+    margin-bottom: 15px;
+}
+
+.fastest_fj-meta-box label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.fastest_fj-meta-box input[type="text"],
+.fastest_fj-meta-box input[type="url"],
+.fastest_fj-meta-box textarea {
+    width: 100%;
+}
