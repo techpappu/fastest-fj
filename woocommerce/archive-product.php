@@ -32,7 +32,7 @@ $title = is_search() ? sprintf( __( 'Search Results: %s', 'fastest_fj' ), get_se
                 <button id="filterToggle" class="flex items-center gap-2 bg-brand-dark text-white px-4 py-2 rounded-full text-sm">
                     <i class="fas fa-filter"></i> <?php esc_html_e( 'Filters', 'fastest_fj' ); ?>
                 </button>
-                <?php woocommerce_catalog_ordering(); ?>
+                <?php //woocommerce_catalog_ordering(); ?>
             </div>
 
             <!-- Sidebar -->
@@ -75,7 +75,7 @@ $title = is_search() ? sprintf( __( 'Search Results: %s', 'fastest_fj' ), get_se
                         </div>
 
                         <!-- Price Filter -->
-                        <?php the_widget( 'WC_Widget_Price_Filter', array( 'title' => __( 'Price Range', 'fastest_fj' ) ) ); ?>
+                        <?php //the_widget( 'WC_Widget_Price_Filter', array( 'title' => __( 'Price Range', 'fastest_fj' ) ) ); ?>
 
                     <?php else : ?>
                         <?php dynamic_sidebar( 'shop-sidebar' ); ?>
@@ -96,6 +96,8 @@ $title = is_search() ? sprintf( __( 'Search Results: %s', 'fastest_fj' ), get_se
                     /**
                      * Hook: woocommerce_before_shop_loop.
                      */
+                    remove_action( 'woocommerce_before_shop_loop', 'woocommerce_result_count', 20 );
+                    remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 30 );
                     do_action( 'woocommerce_before_shop_loop' );
 
                     woocommerce_product_loop_start();
@@ -131,7 +133,8 @@ $title = is_search() ? sprintf( __( 'Search Results: %s', 'fastest_fj' ), get_se
     </div>
 </section>
 
-<?php/**
+<?php
+/**
  * Hook: woocommerce_after_main_content.
  */
 do_action( 'woocommerce_after_main_content' );

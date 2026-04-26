@@ -14,7 +14,7 @@ if ( empty( $product ) || ! $product->is_visible() ) {
     return;
 }
 ?>
-<div <?php wc_product_class( 'product-card group', $product ); ?>>
+<div <?php wc_product_class( 'product-card group flex flex-col justify-between', $product ); ?>>
     <?php
     /**
      * Hook: woocommerce_before_shop_loop_item.
@@ -71,7 +71,7 @@ if ( empty( $product ) || ! $product->is_visible() ) {
         if ( ! $product->is_type( 'variable' ) ) {
             $link = sprintf(
                 '<a href="%s" class="buy-now-button w-full bg-brand-gold text-white py-2 rounded-full text-sm font-semibold hover:bg-brand-dark transition text-center block !text-white mt-2">%s</a>',
-                esc_url( add_query_arg( 'buy-now', $product->get_id(), wc_get_checkout_url() ) ),
+                esc_url( add_query_arg( 'add-to-cart', $product->get_id(), wc_get_checkout_url() ) ),
                 esc_html__( 'Buy Now', 'fastest_fj' )
             );
             echo $link;

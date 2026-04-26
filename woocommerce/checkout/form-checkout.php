@@ -20,7 +20,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 
 <section class="pb-16">
     <div class="container mx-auto px-4">
-        <div class="flex flex-col lg:flex-row gap-10 max-w-6xl mx-auto">
+        <div class="flex flex-col lg:flex-row gap-10 max-w-6xl mx-auto rounded-[14px] shadow-[0_10px_30px_rgba(0,0,0,0.08)] p-4">
 
             <!-- Checkout Form -->
             <div class="flex-1">

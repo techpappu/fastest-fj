@@ -7,13 +7,22 @@
 
 defined( 'ABSPATH' ) || exit;
 ?>
-<div class="lg:w-96 flex-shrink-0 order-review-wrapper">
-    <div class="bg-brand-cream rounded-lg p-6 sm:p-8 order-review" id="order_review">
-        <h3 id="order_review_heading" class="font-serif text-xl font-bold mb-6"><?php esc_html_e( 'Order Summary', 'fastest_fj' ); ?></h3>
+<div class="flex-shrink-0 order-review-wrapper woocommerce-checkout-review-order-table">
+    <details class="bg-brand-cream rounded-lg p-6 sm:p-8 order-review group" id="order_review" ontoggle="sessionStorage.setItem('order_review_open', this.open)">
+        <summary class="font-serif text-xl font-bold cursor-pointer list-none flex justify-between items-center outline-none [&::-webkit-details-marker]:hidden">
+            <span><?php esc_html_e( 'Order Summary', 'fastest_fj' ); ?></span>
+            <div class="flex items-center gap-4">
+                <span class="text-brand-orange"><?php wc_cart_totals_order_total_html(); ?></span>
+                <svg class="w-6 h-6 text-gray-500 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+            </div>
+        </summary>
 
-        <?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
+        <div class="mt-6 border-t border-gray-200 pt-6">
+            <?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
 
-        <table class="shop_table woocommerce-checkout-review-order-table w-full text-sm">
+        <table class="shop_table w-full text-sm">
             <tbody>
                 <?php
                 do_action( 'woocommerce_review_order_before_cart_contents' );
@@ -104,5 +113,14 @@ defined( 'ABSPATH' ) || exit;
         </table>
 
         <?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
-    </div>
+        </div>
+    </details>
+    <script>
+        if (sessionStorage.getItem('order_review_open') === 'true') {
+            var orderReviewDetails = document.getElementById('order_review');
+            if (orderReviewDetails) {
+                orderReviewDetails.open = true;
+            }
+        }
+    </script>
 </div>

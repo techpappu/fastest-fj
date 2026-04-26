@@ -153,30 +153,7 @@ add_action( 'woocommerce_after_main_content', function() {
  */
 remove_action( 'woocommerce_sidebar', 'woocommerce_get_sidebar', 10 );
 
-/**
- * Add custom sidebar for shop
- */
-add_action( 'woocommerce_before_shop_loop', function() {
-    echo '<div class="container mx-auto px-4 py-10"><div class="flex flex-col lg:flex-row gap-10">';
-    echo '<aside class="lg:w-64 flex-shrink-0">';
-    if ( is_active_sidebar( 'shop-sidebar' ) ) {
-        dynamic_sidebar( 'shop-sidebar' );
-    } else {
-        // Default sidebar content
-        the_widget( 'WC_Widget_Product_Categories', array(
-            'title' => __( 'Categories', 'fastest_fj' ),
-        ) );
-        the_widget( 'WC_Widget_Price_Filter', array(
-            'title' => __( 'Price Range', 'fastest_fj' ),
-        ) );
-        the_widget( 'WC_Widget_Layered_Nav', array(
-            'title'    => __( 'Material', 'fastest_fj' ),
-            'attribute' => 'pa_material',
-        ) );
-    }
-    echo '</aside>';
-    echo '<div class="flex-1">';
-}, 5 );
+
 
 add_action( 'woocommerce_after_shop_loop', function() {
     echo '</div></div></div>';
