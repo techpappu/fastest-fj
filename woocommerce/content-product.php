@@ -50,7 +50,9 @@ if ( empty( $product ) || ! $product->is_visible() ) {
         </button>
         <!-- now i do not want add to cart i want buy now button in below price -->
         <!-- Add to Cart -->
-        
+        <button class="quick-view-btn absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-600 hover:text-brand-gold transition shadow-sm opacity-60" data-product-id="<?php echo esc_attr( $product->get_id() ); ?>">
+            <i class="fas fa-eye text-sm"></i>
+        </button>
     </div>
 
     <div class="product-info">
@@ -66,7 +68,6 @@ if ( empty( $product ) || ! $product->is_visible() ) {
          * @hooked woocommerce_template_loop_price - 10
          */
         do_action( 'woocommerce_after_shop_loop_item_title' );
-
         // Buy now button
         if ( ! $product->is_type( 'variable' ) ) {
             $link = sprintf(

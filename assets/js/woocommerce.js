@@ -87,7 +87,7 @@
 
     $(document).on('click', '.quick-view-btn', function(e) {
         e.preventDefault();
-        var productId = $(this).data('product_id');
+        var productId = $(this).data('product-id');
         quickViewModal.removeClass('hidden').addClass('flex');
         quickViewModal.find('.quickview-content').html('<div class="text-center py-10"><i class="fas fa-spinner fa-spin text-brand-gold text-2xl"></i></div>');
 

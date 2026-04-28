@@ -70,9 +70,9 @@
     $(document).on('click', '.thumbnail', function(e) {
         e.preventDefault();
         var newSrc = $(this).data('image');
-        $('#main-product-image').attr('src', newSrc);
-        $('.thumbnail').removeClass('active').addClass('border-transparent').removeClass('border-brand-gold');
-        $(this).addClass('active').removeClass('border-transparent').addClass('border-brand-gold');
+        $('#main-product-image').attr('src', newSrc).removeAttr('srcset');
+        $('.thumbnail').removeClass('active border-brand-gold').addClass('border-transparent');
+        $(this).addClass('active border-brand-gold').removeClass('border-transparent');
     });
 
     // Product Tabs

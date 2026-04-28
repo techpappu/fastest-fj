@@ -54,13 +54,14 @@ function fastest_fj_ajax_quick_view() {
     check_ajax_referer( 'fastest_fj_nonce', 'nonce' );
 
     $product_id = isset( $_POST['product_id'] ) ? intval( $_POST['product_id'] ) : 0;
+
     if ( ! $product_id ) {
         wp_send_json_error();
     }
 
     $product = wc_get_product( $product_id );
     if ( ! $product ) {
-        wp_send_json_error();
+       wp_send_json_error();
     }
 
     ob_start();
@@ -183,146 +184,7 @@ add_action( 'woocommerce_before_main_content', function() {
     }
 }, 15 );
 
-/**
- * Single product layout
- */
-remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_sale_flash', 10 );
-remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20 );
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_price', 10 );
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_excerpt', 20 );
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_add_to_cart', 30 );
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
-remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_sharing', 50 );
 
-// Add custom single product layout
-add_action( 'woocommerce_before_single_product', function() {
-    echo '<div class="container mx-auto px-4 py-10">';
-}, 5 );
-
-add_action( 'woocommerce_after_single_product', function() {
-    echo '</div>';
-}, 15 );
-
-add_action( 'woocommerce_before_single_product_summary', 'fastest_fj_single_product_gallery', 20 );
-
-add_action( 'woocommerce_single_product_summary', function() {
-    global $product;
-    ?>
-    <div class="product-summary">
-        <!-- Meta & Badges -->
-        <div class="flex items-center gap-2 mb-2 flex-wrap">
-            <?php if ( $product->is_on_sale() ) : ?>
-                <span class="bg-red-500 text-white text-xs px-2 py-1 rounded font-semibold"><?php esc_html_e( 'SALE', 'fastest_fj' ); ?></span>
-            <?php endif; ?>
-            <?php
-            $created = strtotime( $product->get_date_created() );
-            if ( ( time() - $created ) < 30 * DAY_IN_SECONDS ) :
-            ?>
-                <span class="bg-brand-orange text-white text-xs px-2 py-1 rounded font-semibold"><?php esc_html_e( 'NEW', 'fastest_fj' ); ?></span>
-            <?php endif; ?>
-            <?php if ( $product->get_average_rating() > 0 ) : ?>
-                <div class="flex text-yellow-400 text-xs">
-                    <?php echo wc_get_rating_html( $product->get_average_rating() ); ?>
-                </div>
-                <span class="text-gray-500 text-xs">(<?php echo esc_html( $product->get_review_count() ); ?> <?php esc_html_e( 'Reviews', 'fastest_fj' ); ?>)</span>
-            <?php endif; ?>
-        </div>
-
-        <!-- Title -->
-        <?php woocommerce_template_single_title(); ?>
-
-        <!-- Short Description -->
-        <?php if ( $product->get_short_description() ) : ?>
-            <p class="text-gray-500 text-sm mb-4"><?php echo wp_kses_post( $product->get_short_description() ); ?></p>
-        <?php endif; ?>
-
-        <!-- Price -->
-        <div class="flex items-center gap-3 mb-6">
-            <span class="text-brand-orange font-bold text-2xl"><?php echo wp_kses_post( $product->get_price_html() ); ?></span>
-            <?php if ( $product->is_on_sale() && $product->get_regular_price() ) :
-                $saved = floatval( $product->get_regular_price() ) - floatval( $product->get_sale_price() );
-                if ( $saved > 0 ) : ?>
-                <span class="bg-green-100 text-green-700 text-xs px-2 py-1 rounded font-semibold">
-                    <?php printf( __( 'Save %s', 'fastest_fj' ), wc_price( $saved ) ); ?>
-                </span>
-            <?php endif; endif; ?>
-        </div>
-
-        <!-- Description -->
-        <div class="text-gray-600 text-sm leading-relaxed mb-6">
-            <?php the_content(); ?>
-        </div>
-
-        <!-- Add to Cart -->
-        <?php woocommerce_template_single_add_to_cart(); ?>
-
-        <!-- Product Meta -->
-        <div class="space-y-2 text-sm text-gray-500 border-t border-gray-100 pt-4 mt-6">
-            <p><span class="font-semibold text-brand-text"><?php esc_html_e( 'SKU:', 'fastest_fj' ); ?></span> <?php echo esc_html( $product->get_sku() ? $product->get_sku() : __( 'N/A', 'fastest_fj' ) ); ?></p>
-            <p><span class="font-semibold text-brand-text"><?php esc_html_e( 'Category:', 'fastest_fj' ); ?></span> <?php echo wp_kses_post( wc_get_product_category_list( $product->get_id(), ', ' ) ); ?></p>
-            <?php if ( wc_get_product_tag_list( $product->get_id() ) ) : ?>
-                <p><span class="font-semibold text-brand-text"><?php esc_html_e( 'Tags:', 'fastest_fj' ); ?></span> <?php echo wp_kses_post( wc_get_product_tag_list( $product->get_id(), ', ' ) ); ?></p>
-            <?php endif; ?>
-            <p class="flex items-center gap-2 pt-2">
-                <span class="font-semibold text-brand-text"><?php esc_html_e( 'Share:', 'fastest_fj' ); ?></span>
-                <span class="flex gap-2">
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo esc_url( get_permalink() ); ?>" target="_blank" class="w-8 h-8 bg-brand-cream rounded-full flex items-center justify-center text-gray-500 hover:text-brand-gold transition"><i class="fab fa-facebook-f text-xs"></i></a>
-                    <a href="https://twitter.com/intent/tweet?url=<?php echo esc_url( get_permalink() ); ?>&text=<?php echo esc_attr( get_the_title() ); ?>" target="_blank" class="w-8 h-8 bg-brand-cream rounded-full flex items-center justify-center text-gray-500 hover:text-brand-gold transition"><i class="fab fa-twitter text-xs"></i></a>
-                    <a href="https://pinterest.com/pin/create/button/?url=<?php echo esc_url( get_permalink() ); ?>&media=<?php echo esc_url( get_the_post_thumbnail_url() ); ?>&description=<?php echo esc_attr( get_the_title() ); ?>" target="_blank" class="w-8 h-8 bg-brand-cream rounded-full flex items-center justify-center text-gray-500 hover:text-brand-gold transition"><i class="fab fa-pinterest-p text-xs"></i></a>
-                </span>
-            </p>
-        </div>
-    </div>
-    <?php
-}, 10 );
-
-/**
- * Wrap single product in grid
- */
-add_action( 'woocommerce_before_single_product_summary', function() {
-    echo '<div class="grid grid-cols-1 lg:grid-cols-2 gap-10">';
-}, 1 );
-
-add_action( 'woocommerce_after_single_product_summary', function() {
-    echo '</div>';
-}, 5 );
-
-/**
- * Single Product Gallery
- */
-function fastest_fj_single_product_gallery() {
-    global $product;
-    $attachment_ids = $product->get_gallery_image_ids();
-    $featured_id    = $product->get_image_id();
-    if ( $featured_id ) {
-        array_unshift( $attachment_ids, $featured_id );
-    }
-    ?>
-    <div class="product-gallery">
-        <div class="bg-brand-cream rounded-lg overflow-hidden mb-4 aspect-[4/5]">
-            <?php
-            if ( $featured_id ) {
-                echo wp_get_attachment_image( $featured_id, 'fastest_fj-product-single', false, array(
-                    'id'    => 'main-product-image',
-                    'class' => 'w-full h-full object-cover',
-                ) );
-            }
-            ?>
-        </div>
-        <?php if ( count( $attachment_ids ) > 1 ) : ?>
-        <div class="grid grid-cols-4 gap-3">
-            <?php foreach ( $attachment_ids as $index => $attachment_id ) : ?>
-                <button class="thumbnail <?php echo $index === 0 ? 'active' : ''; ?> aspect-square rounded-lg overflow-hidden border-2 <?php echo $index === 0 ? 'border-brand-gold' : 'border-transparent'; ?> hover:border-brand-gold transition" data-image="<?php echo esc_url( wp_get_attachment_image_url( $attachment_id, 'fastest_fj-product-single' ) ); ?>">
-                    <?php echo wp_get_attachment_image( $attachment_id, 'thumbnail', false, array( 'class' => 'w-full h-full object-cover' ) ); ?>
-                </button>
-            <?php endforeach; ?>
-        </div>
-        <?php endif; ?>
-    </div>
-    <?php
-}
 
 /**
  * Contact Form Handler
