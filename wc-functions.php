@@ -32,8 +32,8 @@ add_filter( 'woocommerce_output_related_products_args', 'fastest_fj_related_prod
 function fastest_fj_upsell_display() {
     woocommerce_upsell_display( 4, 4 );
 }
-remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15 );
-add_action( 'woocommerce_after_single_product_summary', 'fastest_fj_upsell_display', 15 );
+//remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_upsell_display', 15 );
+//add_action( 'woocommerce_after_single_product_summary', 'fastest_fj_upsell_display', 15 );
 
 /**
  * WooCommerce Breadcrumb

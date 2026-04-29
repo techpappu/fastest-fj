@@ -57,7 +57,7 @@
                         <div class="w-10 h-10 bg-brand-gold rounded-full flex items-center justify-center">
                             <i class="fas fa-gem text-white text-lg"></i>
                         </div>
-                        <div class="hidden sm:block">
+                        <div class="">
                             <h1 class="font-serif text-2xl font-bold text-brand-text leading-none"><?php bloginfo( 'name' ); ?></h1>
                             <p class="text-[10px] tracking-widest text-brand-gold uppercase"><?php bloginfo( 'description' ); ?></p>
                         </div>

@@ -144,9 +144,84 @@ while ( have_posts() ) :
 
             <!-- Product Tabs -->
             <div class="mt-16">
+                <?php
+                $product_tabs = apply_filters( 'woocommerce_product_tabs', array() );
+                if ( isset( $product_tabs['reviews'] ) ) {
+                    unset( $product_tabs['reviews'] );
+                }
+                if ( ! empty( $product_tabs ) ) : ?>
+                    <div class="custom-product-tabs mb-12">
+                        <div class="border-b border-gray-200">
+                            <ul class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500" role="tablist">
+                                <?php $i = 0; foreach ( $product_tabs as $key => $tab ) : ?>
+                                    <li class="mr-2" role="presentation">
+                                        <button class="tab-button inline-block p-4 border-b-2 rounded-t-lg hover:text-brand-gold hover:border-brand-gold transition-colors <?php echo $i === 0 ? 'border-brand-gold text-brand-gold' : 'border-transparent'; ?>" 
+                                                id="tab-title-<?php echo esc_attr( $key ); ?>" 
+                                                data-target="#tab-<?php echo esc_attr( $key ); ?>" 
+                                                type="button" role="tab" 
+                                                aria-controls="tab-<?php echo esc_attr( $key ); ?>" 
+                                                aria-selected="<?php echo $i === 0 ? 'true' : 'false'; ?>">
+                                            <?php echo wp_kses_post( apply_filters( 'woocommerce_product_' . $key . '_tab_title', $tab['title'], $key ) ); ?>
+                                        </button>
+                                    </li>
+                                <?php $i++; endforeach; ?>
+                            </ul>
+                        </div>
+                        <div class="tab-content mt-6">
+                            <?php $i = 0; foreach ( $product_tabs as $key => $tab ) : ?>
+                                <div class="tab-pane <?php echo $i === 0 ? 'block' : 'hidden'; ?>" 
+                                     id="tab-<?php echo esc_attr( $key ); ?>" 
+                                     role="tabpanel" 
+                                     aria-labelledby="tab-title-<?php echo esc_attr( $key ); ?>">
+                                    <div class="text-gray-600 text-sm leading-relaxed">
+                                        <?php
+                                        if ( isset( $tab['callback'] ) ) {
+                                            call_user_func( $tab['callback'], $key, $tab );
+                                        }
+                                        ?>
+                                    </div>
+                                </div>
+                            <?php $i++; endforeach; ?>
+                        </div>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const tabButtons = document.querySelectorAll('.custom-product-tabs .tab-button');
+                            const tabPanes = document.querySelectorAll('.custom-product-tabs .tab-pane');
+
+                            tabButtons.forEach(button => {
+                                button.addEventListener('click', () => {
+                                    tabButtons.forEach(btn => {
+                                        btn.classList.remove('border-brand-gold', 'text-brand-gold');
+                                        btn.classList.add('border-transparent');
+                                        btn.setAttribute('aria-selected', 'false');
+                                    });
+
+                                    tabPanes.forEach(pane => {
+                                        pane.classList.remove('block');
+                                        pane.classList.add('hidden');
+                                    });
+
+                                    button.classList.remove('border-transparent');
+                                    button.classList.add('border-brand-gold', 'text-brand-gold');
+                                    button.setAttribute('aria-selected', 'true');
+
+                                    const targetId = button.getAttribute('data-target');
+                                    const targetPane = document.querySelector(targetId);
+                                    if (targetPane) {
+                                        targetPane.classList.remove('hidden');
+                                        targetPane.classList.add('block');
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                <?php endif; ?>
+
                 <?php 
-                woocommerce_output_product_data_tabs();
-                woocommerce_upsell_display();
+                remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10 );
+                do_action('woocommerce_after_single_product_summary');
                 woocommerce_output_related_products();
                 ?>
             </div>

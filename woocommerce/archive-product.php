@@ -36,7 +36,7 @@ $title = is_search() ? sprintf( __( 'Search Results: %s', 'fastest_fj' ), get_se
             </div>
 
             <!-- Sidebar -->
-            <aside id="filterSidebar" class="filter-sidebar fixed inset-y-0 left-0 z-40 w-80 bg-white shadow-xl lg:static lg:w-64 lg:shadow-none lg:transform-none overflow-y-auto lg:h-fit flex-shrink-0">
+            <aside id="filterSidebar" class="filter-sidebar fixed inset-y-0 left-0 z-50 w-80 bg-white shadow-xl lg:static lg:w-64 lg:shadow-none lg:transform-none overflow-y-auto lg:h-fit flex-shrink-0">
                 <div class="p-6 lg:p-0">
                     <div class="flex justify-between items-center lg:hidden mb-6">
                         <h3 class="font-serif text-xl font-bold"><?php esc_html_e( 'Filters', 'fastest_fj' ); ?></h3>
