@@ -68,7 +68,7 @@ add_action( 'after_setup_theme', 'fastest_fj_setup' );
  */
 function fastest_fj_scripts() {
     // Tailwind CSS CDN
-    wp_enqueue_script( 'tailwindcss', 'https://cdn.tailwindcss.com', array(), null,false );
+    wp_enqueue_style( 'tailwindcss', get_template_directory_uri() . '/src/output.css', array(), null,false );
 
     // Font Awesome
     wp_enqueue_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', array(), '6.5.1' );
