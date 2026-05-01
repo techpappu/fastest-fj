@@ -79,30 +79,6 @@ function fastest_fj_scripts() {
     // Main stylesheet
     wp_enqueue_style( 'fastest_fj-style', get_stylesheet_uri(), array(), fastest_fj_VERSION );
 
-    // Tailwind config
-    wp_add_inline_script( 'tailwindcss', "
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            gold: '#C9A961',
-                            orange: '#E8913A',
-                            cream: '#FAF8F4',
-                            dark: '#1E1E1E',
-                            text: '#2D2D2D',
-                            lightgray: '#F5F3EE'
-                        }
-                    },
-                    fontFamily: {
-                        serif: ['Playfair Display', 'serif'],
-                        sans: ['Lato', 'sans-serif']
-                    }
-                }
-            }
-        }
-    " );
-
     // Theme JS
     wp_enqueue_script( 'fastest_fj-main', get_template_directory_uri() . '/assets/js/main.js', array( 'jquery' ), fastest_fj_VERSION, true );
 
