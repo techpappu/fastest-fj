@@ -83,7 +83,13 @@ function fastest_fj_scripts() {
     );
 
     // Font Awesome
-    wp_enqueue_style( 'font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css', array(), '6.5.1' );
+    wp_enqueue_style(
+        'font-awesome',
+        get_template_directory_uri() . '/assets/vendor/fontawesome/css/all.min.css',
+        array(),
+        fastest_fj_asset_version( '/assets/vendor/fontawesome/css/all.min.css' ),
+        'all'
+    );
 
     // Google Fonts
     wp_enqueue_style( 'fastest_fj-fonts', 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Lato:wght@300;400;500;600;700&display=swap', array(), null );
