@@ -58,7 +58,7 @@
                             <i class="fas fa-gem text-white text-lg"></i>
                         </div>
                         <div class="">
-                            <h1 class="font-serif lg:text-2xl text-1X1 font-bold text-brand-text leading-none"><?php bloginfo( 'name' ); ?></h1>
+                            <h1 class="font-serif lg:text-2xl text-xl font-bold text-brand-text leading-none"><?php bloginfo( 'name' ); ?></h1>
                             <p class="text-[10px] tracking-widest text-brand-gold uppercase"><?php bloginfo( 'description' ); ?></p>
                         </div>
                     </a>
