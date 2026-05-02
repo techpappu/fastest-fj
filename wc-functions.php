@@ -330,6 +330,96 @@ function bd_change_checkout_heading($translated, $text, $domain)
 	return $translated;
 }
 
+/**
+ * Custom WooCommerce Pagination with Numbered Pages
+ */
+function fastest_fj_pagination() {
+	if ( ! woocommerce_product_loop() ) {
+		return;
+	}
+
+	$total   = wc_get_loop_prop( 'total_pages' );
+	$current = wc_get_loop_prop( 'current_page' );
+
+	if ( $total <= 1 ) {
+		return;
+	}
+
+	?>
+	<nav class="woocommerce-pagination py-8">
+		<div class="flex items-center justify-center gap-2 flex-wrap">
+			<?php
+			// Previous button - Circular with only icon
+			if ( $current > 1 ) {
+				$prev_link = get_pagenum_link( $current - 1 );
+				echo '<a href="' . esc_url( $prev_link ) . '" class="pagination-prev w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-brand-gold hover:text-white hover:border-brand-gold transition"><i class="fas fa-chevron-left"></i></a>';
+			} else {
+				echo '<span class="pagination-prev w-10 h-10 border border-gray-200 rounded-full flex items-center justify-center text-gray-300 cursor-not-allowed"><i class="fas fa-chevron-left"></i></span>';
+			}
+
+			// Page numbers
+			$range = 2; // Number of pages to show around current page
+			$showitems = $range * 2 + 1;
+
+			if ( $total > $showitems ) {
+				// Show first page
+				if ( $current > 1 ) {
+					echo '<a href="' . esc_url( get_pagenum_link( 1 ) ) . '" class="page-number w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-brand-gold hover:text-white hover:border-brand-gold transition text-sm font-semibold">1</a>';
+				} else {
+					echo '<span class="page-number page-number-current w-10 h-10 border border-brand-gold bg-brand-gold text-white rounded-full flex items-center justify-center text-sm font-semibold">1</span>';
+				}
+
+				// Ellipsis if needed
+				if ( $current > $range + 2 ) {
+					echo '<span class="page-number-ellipsis px-2 py-2 text-gray-500">...</span>';
+				}
+
+				// Show pages around current
+				for ( $i = max( 2, $current - $range ); $i <= min( $total - 1, $current + $range ); $i++ ) {
+					if ( $i === $current ) {
+						echo '<span class="page-number page-number-current w-10 h-10 border border-brand-gold bg-brand-gold text-white rounded-full flex items-center justify-center text-sm font-semibold">' . esc_html( $i ) . '</span>';
+					} else {
+						echo '<a href="' . esc_url( get_pagenum_link( $i ) ) . '" class="page-number w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-brand-gold hover:text-white hover:border-brand-gold transition text-sm font-semibold">' . esc_html( $i ) . '</a>';
+					}
+				}
+
+				// Ellipsis if needed
+				if ( $current < $total - $range - 1 ) {
+					echo '<span class="page-number-ellipsis px-2 py-2 text-gray-500">...</span>';
+				}
+
+				// Show last page
+				if ( $current !== $total ) {
+					echo '<a href="' . esc_url( get_pagenum_link( $total ) ) . '" class="page-number w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-brand-gold hover:text-white hover:border-brand-gold transition text-sm font-semibold">' . esc_html( $total ) . '</a>';
+				}
+			} else {
+				// Show all pages if total is small
+				for ( $i = 1; $i <= $total; $i++ ) {
+					if ( $i === $current ) {
+						echo '<span class="page-number page-number-current w-10 h-10 border border-brand-gold bg-brand-gold text-white rounded-full flex items-center justify-center text-sm font-semibold">' . esc_html( $i ) . '</span>';
+					} else {
+						echo '<a href="' . esc_url( get_pagenum_link( $i ) ) . '" class="page-number w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-brand-gold hover:text-white hover:border-brand-gold transition text-sm font-semibold">' . esc_html( $i ) . '</a>';
+					}
+				}
+			}
+
+			// Next button - Circular with only icon
+			if ( $current < $total ) {
+				$next_link = get_pagenum_link( $current + 1 );
+				echo '<a href="' . esc_url( $next_link ) . '" class="pagination-next w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center hover:bg-brand-gold hover:text-white hover:border-brand-gold transition"><i class="fas fa-chevron-right"></i></a>';
+			} else {
+				echo '<span class="pagination-next w-10 h-10 border border-gray-200 rounded-full flex items-center justify-center text-gray-300 cursor-not-allowed"><i class="fas fa-chevron-right"></i></span>';
+			}
+			?>
+		</div>
+	</nav>
+	<?php
+}
+
+// Remove default WooCommerce pagination and add custom pagination
+remove_action( 'woocommerce_after_shop_loop', 'woocommerce_pagination', 10 );
+add_action( 'woocommerce_after_shop_loop', 'fastest_fj_pagination', 10 );
+
 add_filter('woocommerce_order_button_text', function () {
 	return '🛒 অর্ডার করুন';
 });

@@ -9,7 +9,7 @@ defined( 'ABSPATH' ) || exit;
 ?>
 <div class="flex-shrink-0 order-review-wrapper woocommerce-checkout-review-order-table">
     <details class="bg-brand-cream rounded-lg p-6 sm:p-8 order-review group" id="order_review" ontoggle="sessionStorage.setItem('order_review_open', this.open)">
-        <summary class="font-serif text-xl font-bold cursor-pointer list-none flex justify-between items-center outline-none [&::-webkit-details-marker]:hidden">
+        <summary class="font-serif text-sm md:text-xl font-bold cursor-pointer list-none flex justify-between items-center outline-none [&::-webkit-details-marker]:hidden">
             <span><?php esc_html_e( 'Order Summary', 'fastest_fj' ); ?></span>
             <div class="flex items-center gap-4">
                 <span class="text-brand-orange"><?php wc_cart_totals_order_total_html(); ?></span>
