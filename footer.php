@@ -178,6 +178,11 @@
         </div>
     </footer>
 
+    <!-- Fixed Call Button -->
+    <a href="tel:+8809647426916" class="fixed bottom-20 border border-white right-6 w-12 h-12 bg-brand-dark text-white rounded-full shadow-lg flex items-center justify-center hover:bg-brand-gold transition z-40" aria-label="<?php esc_attr_e( 'Call us', 'fastest_fj' ); ?>">
+        <i class="fas fa-phone"></i>
+    </a>
+
     <!-- Scroll to Top -->
     <button id="scrollTop" class="scroll-top fixed bottom-6 right-6 w-12 h-12 bg-brand-gold text-white rounded-full shadow-lg flex items-center justify-center hover:bg-brand-orange transition z-40" aria-label="<?php esc_attr_e( 'Scroll to top', 'fastest_fj' ); ?>">
         <i class="fas fa-arrow-up"></i>
