@@ -78,4 +78,76 @@
   .woocommerce-checkout #payment #place_order img.emoji {
     @apply h-5 w-5;
   }
+  /* premium box options */
+  .premium-box-option {
+    @apply mt-6 mb-4;
+  }
+
+  .premium-box-option__input {
+    @apply sr-only;
+  }
+
+  .premium-box-option__card {
+    @apply m-0 flex w-full cursor-pointer items-center gap-3 rounded-lg border border-gray-200 bg-brand-cream p-3.5 text-brand-text transition hover:border-brand-gold hover:bg-white;
+  }
+
+  .premium-box-option__icon,
+  .premium-box-option__check {
+    @apply inline-flex shrink-0 items-center justify-center rounded-full;
+  }
+
+  .premium-box-option__icon {
+    @apply h-10 w-10 bg-white text-base text-brand-gold;
+  }
+
+  .premium-box-option__content {
+    @apply min-w-0 flex-1;
+  }
+
+  .premium-box-option__top {
+    @apply flex items-center justify-between gap-3;
+  }
+
+  .premium-box-option__title {
+    @apply block font-serif text-base font-bold leading-tight;
+  }
+
+  .premium-box-option__price {
+    @apply shrink-0 text-sm font-bold leading-tight text-brand-orange;
+  }
+
+  .premium-box-option__text {
+    @apply mt-0.5 block text-xs leading-snug text-gray-500;
+  }
+
+  .premium-box-option__check {
+    @apply h-6 w-6 border-2 border-gray-300 bg-white text-[11px] text-white;
+  }
+
+  .premium-box-option__input:focus-visible + .premium-box-option__card {
+    @apply outline-2 outline-offset-2 outline-brand-gold;
+  }
+
+  .premium-box-option__input:checked + .premium-box-option__card {
+    @apply border-brand-gold bg-white shadow-lg;
+  }
+
+  .premium-box-option__input:checked + .premium-box-option__card .premium-box-option__icon,
+  .premium-box-option__input:checked + .premium-box-option__card .premium-box-option__check {
+    @apply border-brand-gold bg-brand-gold text-white;
+  }
+
+  @media (max-width: 480px) {
+    .premium-box-option__card {
+      @apply items-start p-3;
+    }
+
+    .premium-box-option__top {
+      @apply flex-col items-start gap-1;
+    }
+
+    .premium-box-option__check {
+      @apply mt-1;
+    }
+  }
 }

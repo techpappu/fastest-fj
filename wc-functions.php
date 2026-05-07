@@ -424,6 +424,11 @@ add_filter('woocommerce_order_button_text', function () {
 	return '🛒 অর্ডার করুন';
 });
 
+remove_action( 'woocommerce_checkout_terms_and_conditions', 'wc_checkout_privacy_policy_text', 20 );
+add_filter( 'woocommerce_get_privacy_policy_text', function( $text, $type ) {
+	return 'checkout' === $type ? '' : $text;
+}, 10, 2 );
+
 /**
  * Ultra-light WooCommerce mode:
  * - Completely disables all WooCommerce emails
@@ -473,3 +478,6 @@ add_filter( 'woocommerce_order_number', function( $order_number, $order ) {
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_script('wc-price-slider');
 });
+
+
+require_once get_template_directory() . '/gift-box-code.php';
