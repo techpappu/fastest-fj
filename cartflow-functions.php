@@ -151,9 +151,8 @@ function fastest_fj_cartflow_sync_cart( $product_id ) {
 	$product = wc_get_product( $product_id );
 	if ( ! $product || ! $product->is_purchasable() ) {
 		return false;
-	}
-
-	$premium_box_product_id = function_exists( 'fastest_fj_premium_box_product_id' ) ? fastest_fj_premium_box_product_id() : 0;
+	}	
+	$premium_box_product_id = fastest_fj_premium_box_enabled() ? fastest_fj_premium_box_product_id() : 0;
 	$cart_item_key          = '';
 
 	foreach ( WC()->cart->get_cart() as $key => $cart_item ) {
@@ -195,20 +194,7 @@ function fastest_fj_cartflow_ensure_default_cart( $default_id, $product_ids ) {
 		return;
 	}
 
-	$cart_product_ids = array();
-	$premium_box_product_id = function_exists( 'fastest_fj_premium_box_product_id' ) ? fastest_fj_premium_box_product_id() : 0;
-
-	foreach ( WC()->cart->get_cart() as $cart_item ) {
-		$cart_product_id = absint( $cart_item['product_id'] );
-
-		if ( $premium_box_product_id && $cart_product_id === $premium_box_product_id ) {
-			continue;
-		}
-
-		$cart_product_ids[] = $cart_product_id;
-	}
-
-	if ( 1 === count( $cart_product_ids ) && in_array( $cart_product_ids[0], $product_ids, true ) ) {
+	if ( ! in_array( absint( $default_id ), $product_ids, true ) ) {
 		return;
 	}
 
