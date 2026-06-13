@@ -36,6 +36,8 @@ $benefits           = fastest_fj_cartflow_parse_lines( fastest_fj_cartflow_get( 
 $testimonials       = fastest_fj_cartflow_parse_lines( fastest_fj_cartflow_get( 'testimonials', $post_id ), array( 'name', 'loc', 'stars', 'text' ) );
 $faq_items          = fastest_fj_cartflow_parse_lines( fastest_fj_cartflow_get( 'faqs', $post_id ), array( 'q', 'a' ) );
 $phone_href         = preg_replace( '/[^0-9+]/', '', $phone_number );
+$product_name       = get_the_title( $post_id );
+$product_image      = get_the_post_thumbnail_url( $post_id, 'large' );
 
 if ( ! $footer_text ) {
 	$footer_text = '© ' . date_i18n( 'Y' ) . ' ' . get_bloginfo( 'name' ) . ' — সর্বস্বত্ব সংরক্ষিত';
@@ -75,6 +77,71 @@ if ( ! $footer_text ) {
 </header>
 
 <main>
+	<section class="bg-white py-6 sm:py-10">
+		<div class="container mx-auto px-4">
+			<div class="mx-auto grid max-w-5xl grid-cols-1 items-center gap-4 rounded-[14px] border border-[#f0ebe3] bg-white p-3 shadow-[0_16px_40px_rgba(45,45,45,0.08)] sm:p-5 lg:grid-cols-[minmax(260px,0.9fr)_minmax(0,1.1fr)] lg:gap-7">
+				
+				<div class="relative overflow-hidden rounded-[10px] bg-brand-cream">
+					<div class="absolute left-3 top-3 z-10 rounded-full bg-brand-gold px-3 py-1 text-[10px] font-extrabold uppercase tracking-wide text-white shadow-[0_6px_16px_rgba(0,0,0,0.12)]">
+						<?php esc_html_e( 'Featured Product', 'fastest_fj' ); ?>
+					</div>
+					<?php if ( $product_image ) : ?>
+						<img src="<?php echo esc_url( $product_image ); ?>" alt="<?php echo esc_attr( $product_name ); ?>" class="aspect-square w-full object-cover">
+					<?php else : ?>
+						<div class="flex aspect-square w-full items-center justify-center text-center text-brand-text">
+							<div>
+								<i class="fas fa-gem mb-2.5 block text-[44px] text-brand-gold" aria-hidden="true"></i>
+								<span class="block px-5 font-serif text-[21px] font-bold leading-tight"><?php echo esc_html( $product_name ); ?></span>
+							</div>
+						</div>
+					<?php endif; ?>
+				</div>
+
+				<div class="min-w-0 lg:pr-1">
+					
+					<div class="mb-3 flex flex-wrap gap-2">
+						<span class="inline-flex items-center gap-1 rounded-full bg-brand-cream px-3 py-1.5 text-xs font-bold leading-none text-[#b98c00]">
+							<i class="fas fa-star text-[11px]" aria-hidden="true"></i>
+							<?php esc_html_e( 'Customer Favorite', 'fastest_fj' ); ?>
+						</span>
+						<span class="inline-flex items-center gap-1 rounded-full bg-[#fff5e5] px-3 py-1.5 text-xs font-bold leading-none text-brand-orange">
+							<i class="fas fa-truck text-[11px]" aria-hidden="true"></i>
+							<?php esc_html_e( 'Fast Delivery', 'fastest_fj' ); ?>
+						</span>
+					</div>
+
+					<h2 class="m-0 font-serif text-[28px] font-extrabold leading-tight text-brand-dark sm:text-[34px]">
+						<?php echo esc_html( $product_name ); ?>
+					</h2>
+					<p class="mt-3 text-[13px] leading-6 text-gray-600 sm:text-sm sm:leading-7">
+						<?php esc_html_e( 'Premium quality, carefully packed, and ready for cash on delivery anywhere in Bangladesh.', 'fastest_fj' ); ?>
+					</p>
+
+					<div class="mt-4 grid grid-cols-3 gap-1.5 sm:gap-2">
+						<div class="flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-[#eee5d5] bg-brand-cream px-1.5 py-1.5 text-center sm:min-h-10 sm:px-2">
+							<i class="fas fa-shield-alt text-xs text-brand-gold sm:text-sm" aria-hidden="true"></i>
+							<span class="whitespace-nowrap text-[10px] font-extrabold leading-tight text-brand-text sm:text-[11px]"><?php esc_html_e( 'Original', 'fastest_fj' ); ?></span>
+						</div>
+						<div class="flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-[#eee5d5] bg-brand-cream px-1.5 py-1.5 text-center sm:min-h-10 sm:px-2">
+							<i class="fas fa-money-bill-wave text-xs text-brand-gold sm:text-sm" aria-hidden="true"></i>
+							<span class="whitespace-nowrap text-[10px] font-extrabold leading-tight text-brand-text sm:text-[11px]"><?php esc_html_e( 'COD', 'fastest_fj' ); ?></span>
+						</div>
+						<div class="flex min-h-9 items-center justify-center gap-1.5 rounded-lg border border-[#eee5d5] bg-brand-cream px-1.5 py-1.5 text-center sm:min-h-10 sm:px-2">
+							<i class="fas fa-undo text-xs text-brand-gold sm:text-sm" aria-hidden="true"></i>
+							<span class="whitespace-nowrap text-[10px] font-extrabold leading-tight text-brand-text sm:text-[11px]"><?php esc_html_e( 'Easy Return', 'fastest_fj' ); ?></span>
+						</div>
+					</div>
+
+					<div class="mt-5 flex justify-center">
+						<a href="#order-form" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand-orange px-6 py-3 text-sm font-extrabold text-white shadow-[0_10px_20px_rgba(232,145,58,0.22)] transition hover:-translate-y-0.5 hover:bg-brand-gold hover:text-white">
+							<?php echo esc_html( $cta_button ); ?>
+							<i class="fas fa-arrow-down" aria-hidden="true"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 	<section class="bg-brand-cream py-10 sm:py-14">
 		<div class="container mx-auto px-4 text-center max-w-2xl">
 			<h1 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-brand-text mb-3 leading-snug">
@@ -112,7 +179,7 @@ if ( ! $footer_text ) {
 		</section>
 	<?php endif; ?>
 
-	<section class="py-6 sm:py-10">
+	<section id="order-form" class="py-6 sm:py-10">
 		<div class="container mx-auto px-4 max-w-3xl">
 			<?php
 			while ( have_posts() ) :
