@@ -149,6 +149,48 @@ function fastest_fj_customize_register( $wp_customize ) {
         'type'    => 'text',
     ) );
 
+    // Checkout Options
+    $wp_customize->add_section( 'fastest_fj_checkout', array(
+        'title' => __( 'Checkout Options', 'fastest_fj' ),
+        'panel' => 'fastest_fj_theme_options',
+    ) );
+
+    $wp_customize->add_setting( 'fastest_fj_premium_box_enabled', array(
+        'default'           => '1',
+        'sanitize_callback' => 'absint',
+    ) );
+    $wp_customize->add_control( 'fastest_fj_premium_box_enabled', array(
+        'label'   => __( 'Show premium gift box option', 'fastest_fj' ),
+        'section' => 'fastest_fj_checkout',
+        'type'    => 'checkbox',
+    ) );
+
+    $wp_customize->add_setting( 'fastest_fj_premium_box_checked', array(
+        'default'           => '1',
+        'sanitize_callback' => 'absint',
+    ) );
+    $wp_customize->add_control( 'fastest_fj_premium_box_checked', array(
+        'label'       => __( 'Check premium gift box by default', 'fastest_fj' ),
+        'description' => __( 'When enabled, the premium box product is added automatically on checkout load.', 'fastest_fj' ),
+        'section'     => 'fastest_fj_checkout',
+        'type'        => 'checkbox',
+    ) );
+
+    $wp_customize->add_setting( 'fastest_fj_premium_box_product_id', array(
+        'default'           => 184,
+        'sanitize_callback' => 'absint',
+    ) );
+    $wp_customize->add_control( 'fastest_fj_premium_box_product_id', array(
+        'label'       => __( 'Premium gift box product ID', 'fastest_fj' ),
+        'description' => __( 'Enter the WooCommerce product ID used for the premium gift box add-on.', 'fastest_fj' ),
+        'section'     => 'fastest_fj_checkout',
+        'type'        => 'number',
+        'input_attrs' => array(
+            'min'  => 1,
+            'step' => 1,
+        ),
+    ) );
+
     // Social Media
     $wp_customize->add_section( 'fastest_fj_social', array(
         'title' => __( 'Social Media', 'fastest_fj' ),

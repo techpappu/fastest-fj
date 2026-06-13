@@ -152,6 +152,7 @@ add_filter( 'woocommerce_enqueue_styles', '__return_empty_array' );
  *  WooCommerce functions
  */
 include_once 'wc-functions.php';
+require_once get_template_directory() . '/cartflow-functions.php';
 
 /**
  * Sidebars & Widgets

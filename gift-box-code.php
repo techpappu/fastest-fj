@@ -1,6 +1,24 @@
 <?php
+function fastest_fj_premium_box_enabled() {
+    return (bool) get_theme_mod( 'fastest_fj_premium_box_enabled', '1' );
+}
+
+function fastest_fj_premium_box_checked_by_default() {
+    return (bool) get_theme_mod( 'fastest_fj_premium_box_checked', '1' );
+}
+
 function fastest_fj_premium_box_product_id() {
-    return 83;
+    return absint( get_theme_mod( 'fastest_fj_premium_box_product_id', 184 ) );
+}
+
+function fastest_fj_premium_box_product() {
+    if ( ! function_exists( 'wc_get_product' ) ) {
+        return false;
+    }
+
+    $product_id = fastest_fj_premium_box_product_id();
+
+    return $product_id ? wc_get_product( $product_id ) : false;
 }
 
 function fastest_fj_cart_has_premium_box() {
@@ -9,6 +27,10 @@ function fastest_fj_cart_has_premium_box() {
     }
 
     $product_id = fastest_fj_premium_box_product_id();
+
+    if ( ! $product_id ) {
+        return false;
+    }
 
     foreach ( WC()->cart->get_cart() as $cart_item ) {
         if ( (int) $cart_item['product_id'] === $product_id ) {
@@ -22,6 +44,16 @@ function fastest_fj_cart_has_premium_box() {
 // Premium box add-on in checkout payment section.
 add_action( 'woocommerce_review_order_before_payment', 'add_custom_checkout_checkbox', 20 );
 function add_custom_checkout_checkbox() {
+    if ( ! fastest_fj_premium_box_enabled() ) {
+        return;
+    }
+
+    $product = fastest_fj_premium_box_product();
+
+    if ( ! $product || ! $product->is_purchasable() ) {
+        return;
+    }
+
     $is_checked = fastest_fj_cart_has_premium_box();
     ?>
     <div class="premium-box-option">
@@ -32,8 +64,8 @@ function add_custom_checkout_checkbox() {
             </span>
             <span class="premium-box-option__content">
                 <span class="premium-box-option__top">
-                    <span class="premium-box-option__title"><?php esc_html_e( 'Premium Gift Box', 'fastest_fj' ); ?></span>
-                    <span class="premium-box-option__price"><?php echo wp_kses_post( wc_price( 100 ) ); ?></span>
+                    <span class="premium-box-option__title"><?php echo esc_html( $product->get_name() ); ?></span>
+                    <span class="premium-box-option__price"><?php echo wp_kses_post( $product->get_price_html() ); ?></span>
                 </span>
             </span>
             <span class="premium-box-option__check" aria-hidden="true">
@@ -47,16 +79,18 @@ function add_custom_checkout_checkbox() {
 // jQuery + Ajax logic
 add_action( 'wp_footer', 'custom_product_script' );
 function custom_product_script() {
-    if ( is_checkout() && ! is_wc_endpoint_url() ) :
+    if ( fastest_fj_premium_box_enabled() && is_checkout() && ! is_wc_endpoint_url() ) :
     ?>
     <script type="text/javascript">
     jQuery(function($){
         if (typeof woocommerce_params === 'undefined') return;
+        var premiumBoxDefaultChecked = <?php echo wp_json_encode( fastest_fj_premium_box_checked_by_default() ); ?>;
+        var premiumBoxNonce = <?php echo wp_json_encode( wp_create_nonce( 'fastest_fj_premium_box' ) ); ?>;
 
         // Auto-check and send Ajax on load
         $(document).ready(function(){
             var $premiumBox = $('input[name=custom_product]');
-            if ($premiumBox.length && ! $premiumBox.is(':checked')) {
+            if (premiumBoxDefaultChecked && $premiumBox.length && ! $premiumBox.is(':checked')) {
                 $premiumBox.prop('checked', true).trigger('change');
             }
         });
@@ -68,6 +102,7 @@ function custom_product_script() {
                 url: woocommerce_params.ajax_url,
                 data: {
                     action: 'custom_product_action',
+                    nonce: premiumBoxNonce,
                     add_custom_product: add
                 },
                 success: function(response){
@@ -85,8 +120,19 @@ function custom_product_script() {
 add_action('wp_ajax_custom_product_action', 'handle_custom_product_ajax');
 add_action('wp_ajax_nopriv_custom_product_action', 'handle_custom_product_ajax');
 function handle_custom_product_ajax() {
+    check_ajax_referer( 'fastest_fj_premium_box', 'nonce' );
+
+    if ( ! fastest_fj_premium_box_enabled() || ! function_exists( 'WC' ) || ! WC()->cart ) {
+        wp_send_json_error( array( 'message' => __( 'Premium gift box is not available.', 'fastest_fj' ) ) );
+    }
+
     $product_id = fastest_fj_premium_box_product_id();
-	$cart = WC()->cart;
+    $product    = fastest_fj_premium_box_product();
+	$cart       = WC()->cart;
+
+    if ( ! $product_id || ! $product || ! $product->is_purchasable() ) {
+        wp_send_json_error( array( 'message' => __( 'Premium gift box product is not valid.', 'fastest_fj' ) ) );
+    }
 
     if (isset($_POST['add_custom_product'])) {
         $add = sanitize_text_field( wp_unslash( $_POST['add_custom_product'] ) ) === '1';
