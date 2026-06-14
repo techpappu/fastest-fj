@@ -72,13 +72,13 @@ if (! $footer_text) {
 
 $cartflow_order_cta = function ($direction = 'down', $wrap_class = 'mt-7') use ($cta_button) {
 	$icon = 'up' === $direction ? 'fa-arrow-up' : 'fa-arrow-down';
-	?>
+?>
 	<div class="<?php echo esc_attr($wrap_class); ?> text-center">
 		<a href="#order-form" class="inline-flex animate-pulse items-center justify-center rounded-full bg-brand-orange px-10 py-4 text-lg font-bold text-white transition hover:bg-brand-gold hover:text-white">
 			<?php echo esc_html($cta_button); ?> <i class="fas <?php echo esc_attr($icon); ?> ml-2" aria-hidden="true"></i>
 		</a>
 	</div>
-	<?php
+<?php
 };
 ?>
 <!DOCTYPE html>
@@ -99,26 +99,25 @@ $cartflow_order_cta = function ($direction = 'down', $wrap_class = 'mt-7') use (
 	<?php endif; ?>
 
 	<header class="sticky top-0 z-50 border-b border-[#f0ebe3] bg-white py-3">
-		<div class="container mx-auto px-4 flex items-center justify-center md:justify-between">	
-			<?php 
-			if ( has_custom_logo() ) {?>
+		<div class="container mx-auto px-4 flex items-center justify-center md:justify-between">
+			<?php
+			if (has_custom_logo()) { ?>
 				<div class="max-w-[150px]">
 					<?php the_custom_logo(); ?>
 				</div>
 			<?php
 			} else {
-				?>
+			?>
 				<a href="<?php echo esc_url(home_url('/')); ?>" class="flex items-center gap-2 no-underline">
-				<div class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gold text-base text-white"><i class="fas fa-gem" aria-hidden="true"></i></div>
-				<div>
-					<div class="font-serif text-xl font-bold leading-none text-brand-text"><?php bloginfo('name'); ?></div>
-					<div class="text-[9px] uppercase tracking-[0.2em] text-brand-gold"><?php bloginfo('description'); ?></div>
-				</div>
+					<div class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gold text-base text-white"><i class="fas fa-gem" aria-hidden="true"></i></div>
+					<div>
+						<div class="font-serif text-xl font-bold leading-none text-brand-text"><?php bloginfo('name'); ?></div>
+						<div class="text-[9px] uppercase tracking-[0.2em] text-brand-gold"><?php bloginfo('description'); ?></div>
+					</div>
 				</a>
-				<?php
-			}
-			; ?>
-			
+			<?php
+			}; ?>
+
 			<?php if ($phone_number) : ?>
 				<a href="tel:<?php echo esc_attr($phone_href); ?>" class="hidden sm:flex items-center gap-2 text-sm font-semibold text-brand-gold hover:text-brand-orange transition">
 					<i class="fas fa-phone-alt" aria-hidden="true"></i>
@@ -141,7 +140,7 @@ $cartflow_order_cta = function ($direction = 'down', $wrap_class = 'mt-7') use (
 
 			</div>
 		</section>
-		<section class="bg-brand-dark pb-10">
+		<section class="bg-brand-dark pb-3">
 			<div class="container mx-auto px-4">
 				<div class="mx-auto grid max-w-5xl grid-cols-1 items-center gap-4 rounded-[14px] border border-white/10 bg-white/5 p-3 shadow-[0_18px_46px_rgba(0,0,0,0.24)] sm:p-5 lg:grid-cols-[minmax(260px,0.9fr)_minmax(0,1.1fr)] lg:gap-7">
 
@@ -195,13 +194,18 @@ $cartflow_order_cta = function ($direction = 'down', $wrap_class = 'mt-7') use (
 								<span class="whitespace-nowrap text-[10px] font-extrabold leading-tight text-white sm:text-[11px]"><?php esc_html_e('Easy Return', 'fastest_fj'); ?></span>
 							</div>
 						</div>
-
+						<div class="mt-5 flex justify-center">
+							<a href="#order-form" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand-orange px-6 py-3 text-sm font-extrabold text-white shadow-[0_10px_20px_rgba(232,145,58,0.22)] transition hover:-translate-y-0.5 hover:bg-brand-gold hover:text-white">
+								<?php echo esc_html($cta_button); ?>
+								<i class="fas fa-arrow-down" aria-hidden="true"></i>
+							</a>
+						</div>
 					</div>
 				</div>
 			</div>
 		</section>
 		<?php if (! empty($gallery_image_ids)) : ?>
-			<section class="bg-brand-white my-10 pb-10 sm:pb-14">
+			<section class="bg-brand-white my-2 sm:my-4">
 				<div class="container mx-auto px-4">
 					<div class="mx-auto grid max-w-5xl grid-cols-3 gap-2 sm:gap-4">
 						<?php foreach ($gallery_image_ids as $image_id) : ?>
@@ -300,7 +304,7 @@ $cartflow_order_cta = function ($direction = 'down', $wrap_class = 'mt-7') use (
 			<?php endif; ?>
 			<?php wp_reset_postdata(); ?>
 		<?php endif; ?>
-		
+
 		<?php if ($faq_items) : ?>
 			<section class="bg-brand-dark py-10 sm:py-14">
 				<div class="container mx-auto px-4 max-w-2xl">
