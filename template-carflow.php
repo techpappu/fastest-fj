@@ -40,7 +40,7 @@ $phone_href         = preg_replace('/[^0-9+]/', '', $phone_number);
 $product_name       = get_the_title($post_id);
 $product_image      = get_the_post_thumbnail_url($post_id, 'large');
 $product_ids        = fastest_fj_cartflow_product_ids($post_id);
-$default_product_id = fastest_fj_cartflow_default_product_id($product_ids, $post_id);
+$default_product_id = fastest_fj_cartflow_get('default_product_id', $post_id);
 $gallery_image_ids  = array();
 
 if (class_exists('WooCommerce') && $default_product_id) {
