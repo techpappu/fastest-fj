@@ -80,17 +80,19 @@ function add_custom_checkout_checkbox() {
 add_action( 'wp_footer', 'custom_product_script' );
 function custom_product_script() {
     if ( fastest_fj_premium_box_enabled() && is_checkout() && ! is_wc_endpoint_url() ) :
+    $is_cartflow_checkout = function_exists( 'fastest_fj_cartflow_is_template' ) && fastest_fj_cartflow_is_template();
     ?>
     <script type="text/javascript">
     jQuery(function($){
         if (typeof woocommerce_params === 'undefined') return;
         var premiumBoxDefaultChecked = <?php echo wp_json_encode( fastest_fj_premium_box_checked_by_default() ); ?>;
         var premiumBoxNonce = <?php echo wp_json_encode( wp_create_nonce( 'fastest_fj_premium_box' ) ); ?>;
+        var isCartflowCheckout = <?php echo wp_json_encode( $is_cartflow_checkout ); ?>;
 
         // Auto-check and send Ajax on load
         $(document).ready(function(){
             var $premiumBox = $('input[name=custom_product]');
-            if (premiumBoxDefaultChecked && $premiumBox.length && ! $premiumBox.is(':checked')) {
+            if (!isCartflowCheckout && premiumBoxDefaultChecked && $premiumBox.length && ! $premiumBox.is(':checked')) {
                 $premiumBox.prop('checked', true).trigger('change');
             }
         });

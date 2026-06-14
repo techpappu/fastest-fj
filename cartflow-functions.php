@@ -152,7 +152,7 @@ function fastest_fj_cartflow_sync_cart( $product_id ) {
 	if ( ! $product || ! $product->is_purchasable() ) {
 		return false;
 	}	
-	$premium_box_product_id = fastest_fj_premium_box_enabled() ? fastest_fj_premium_box_product_id() : 0;
+	$premium_box_product_id = function_exists( 'fastest_fj_premium_box_enabled' ) && fastest_fj_premium_box_enabled() ? fastest_fj_premium_box_product_id() : 0;
 	$cart_item_key          = '';
 
 	foreach ( WC()->cart->get_cart() as $key => $cart_item ) {
@@ -177,6 +177,28 @@ function fastest_fj_cartflow_sync_cart( $product_id ) {
 
 	if ( ! $cart_item_key ) {
 		return false;
+	}
+
+	if (
+		fastest_fj_cartflow_is_template()
+		&& function_exists( 'fastest_fj_premium_box_checked_by_default' )
+		&& function_exists( 'fastest_fj_premium_box_product' )
+		&& fastest_fj_premium_box_checked_by_default()
+		&& $premium_box_product_id
+	) {
+		$has_premium_box     = false;
+		$premium_box_product = fastest_fj_premium_box_product();
+
+		foreach ( WC()->cart->get_cart() as $cart_item ) {
+			if ( absint( $cart_item['product_id'] ) === $premium_box_product_id ) {
+				$has_premium_box = true;
+				break;
+			}
+		}
+
+		if ( ! $has_premium_box && $premium_box_product && $premium_box_product->is_purchasable() ) {
+			WC()->cart->add_to_cart( $premium_box_product_id, 1 );
+		}
 	}
 
 	WC()->cart->calculate_totals();
@@ -341,7 +363,7 @@ add_action( 'wp_ajax_fastest_fj_cartflow_select_product', 'fastest_fj_cartflow_s
 add_action( 'wp_ajax_nopriv_fastest_fj_cartflow_select_product', 'fastest_fj_cartflow_select_product' );
 
 function fastest_fj_cartflow_assets() {
-	if ( ! fastest_fj_cartflow_is_template() && ! is_singular() ) {
+	if ( ! fastest_fj_cartflow_is_template() && ( ! is_singular() || ! has_shortcode( get_post_field( 'post_content', get_queried_object_id() ), 'cartflow-custom' ) ) ) {
 		return;
 	}
 
@@ -597,4 +619,6 @@ add_filter( 'woocommerce_is_checkout', function ( $is_checkout ) {
 	if ( fastest_fj_cartflow_is_template() ) {
 		return true;
 	}
+
+	return $is_checkout;
 } );

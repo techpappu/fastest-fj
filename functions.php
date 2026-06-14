@@ -234,6 +234,10 @@ add_filter( 'excerpt_length', 'fastest_fj_excerpt_length', 999 );
  * Ensure cart fragments load
  */
 function fastest_fj_ensure_cart_fragments() {
+    if ( function_exists( 'fastest_fj_cartflow_is_template' ) && fastest_fj_cartflow_is_template() ) {
+        return;
+    }
+
     wp_enqueue_script( 'wc-cart-fragments' );
 }
 add_action( 'wp_enqueue_scripts', 'fastest_fj_ensure_cart_fragments', 30 );
