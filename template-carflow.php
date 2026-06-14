@@ -101,11 +101,21 @@ $cartflow_order_cta = function ($direction = 'down', $wrap_class = 'mt-7') use (
 	<header class="sticky top-0 z-50 border-b border-[#f0ebe3] bg-white py-3">
 		<div class="container mx-auto px-4 flex items-center justify-center md:justify-between">
 			<a href="<?php echo esc_url(home_url('/')); ?>" class="flex items-center gap-2 no-underline">
-				<div class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gold text-base text-white"><i class="fas fa-gem" aria-hidden="true"></i></div>
-				<div>
-					<div class="font-serif text-xl font-bold leading-none text-brand-text"><?php bloginfo('name'); ?></div>
-					<div class="text-[9px] uppercase tracking-[0.2em] text-brand-gold"><?php bloginfo('description'); ?></div>
-				</div>
+				
+				<?php 
+				if ( has_custom_logo() ) {
+                    the_custom_logo();
+                } else {
+                    ?>
+                    <div class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gold text-base text-white"><i class="fas fa-gem" aria-hidden="true"></i></div>
+					<div>
+						<div class="font-serif text-xl font-bold leading-none text-brand-text"><?php bloginfo('name'); ?></div>
+						<div class="text-[9px] uppercase tracking-[0.2em] text-brand-gold"><?php bloginfo('description'); ?></div>
+					</div>
+                    <?php
+                }
+				
+				; ?>
 			</a>
 			<?php if ($phone_number) : ?>
 				<a href="tel:<?php echo esc_attr($phone_href); ?>" class="hidden sm:flex items-center gap-2 text-sm font-semibold text-brand-gold hover:text-brand-orange transition">
