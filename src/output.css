@@ -604,6 +604,9 @@
   .max-w-6xl {
     max-width: var(--container-6xl);
   }
+  .max-w-\[150px\] {
+    max-width: 150px;
+  }
   .max-w-\[480px\] {
     max-width: 480px;
   }
