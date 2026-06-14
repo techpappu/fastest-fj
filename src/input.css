@@ -109,7 +109,7 @@
   }
 
   .premium-box-option__title {
-    @apply block font-serif text-base text-xs leading-tight;
+    @apply block font-serif text-base text-red-500 text-[10px] leading-tight;
   }
 
   .premium-box-option__price {
