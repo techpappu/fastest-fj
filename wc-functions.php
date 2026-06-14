@@ -308,7 +308,7 @@ add_filter('woocommerce_checkout_fields', function ($fields) {
 
 	/* Phone field */
 	$fields['billing']['billing_phone']['label']       = 'মোবাইল নাম্বার';
-	$fields['billing']['billing_phone']['placeholder'] = '+880 01xxx-xxxxxx';
+	$fields['billing']['billing_phone']['placeholder'] = '+880 18xxx-xxxxxx';
 	$fields['billing']['billing_phone']['required']    = true;
 	$fields['billing']['billing_phone']['priority']    = 20;
 

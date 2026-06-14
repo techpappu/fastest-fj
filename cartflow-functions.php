@@ -475,7 +475,17 @@ function fastest_fj_cartflow_css() {
 .fastest-cartflow-order-form .woocommerce form .form-row{margin-bottom:8px}
 .fastest-cartflow-order-form .woocommerce form .form-row label{display:inline-block;background:#fff;color:#c41e3a;font-size:11px;margin:0 0 -8px 12px;position:relative;z-index:1;padding:0 4px}
 .fastest-cartflow-order-form .woocommerce form .form-row .input-text,.fastest-cartflow-order-form .woocommerce form .form-row select,.fastest-cartflow-order-form .woocommerce form .form-row textarea{border-radius:6px;border-color:#d7d7d7;padding:12px 14px;font-size:16px}
-.fastest-cartflow-order-form #payment #place_order{background:#ff8900;border-radius:6px;font-size:16px}
+.fastest-cartflow-order-form form.checkout{display:flex !important;flex-direction:column}
+.fastest-cartflow-order-form .woocommerce-checkout #customer_details{order:1 !important;}
+.fastest-cartflow-order-form .woocommerce-checkout #order_review_heading{order:3}
+.fastest-cartflow-order-form .woocommerce-checkout .woocommerce-additional-fields{display:none}
+.fastest-cartflow-order-form .woocommerce-checkout .premium-box-option{order:3}
+.fastest-cartflow-order-form .woocommerce-checkout .woocommerce-checkout-review-order-table{order:4}
+.fastest-cartflow-order-form .woocommerce-checkout #payment{display:flex;flex-direction:column;order:2 !important;background:transparent;border:0;margin:0 0 12px;padding:0}
+.fastest-cartflow-order-form .woocommerce-checkout #payment ul.payment_methods,.fastest-cartflow-order-form .woocommerce-checkout #payment .payment_box{display:none!important}
+.fastest-cartflow-order-form .woocommerce-checkout #payment .place-order{order:1;margin:0;padding:0;background:transparent;border:0}
+.fastest-cartflow-order-form .woocommerce-checkout #payment .woocommerce-terms-and-conditions-wrapper{display:none}
+.fastest-cartflow-order-form #payment #place_order{width:100%;background:#ff8900;border-radius:6px;font-size:16px;font-weight:800;margin:0;padding:14px;color:#fff}
 .fastest-cartflow-dummy-checkout{padding:8px 0 10px}
 .fastest-cartflow-dummy-checkout h3{font-family:"Playfair Display",serif;text-align:center;font-size:24px;margin:0 0 8px}
 .fastest-cartflow-dummy-checkout input{display:block;width:100%;border:1px solid #d7d7d7;border-radius:6px;padding:13px;margin-bottom:8px;background:#fff;font-size:16px}
