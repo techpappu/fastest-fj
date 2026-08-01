@@ -56,25 +56,41 @@ function fastest_fj_loop_product_thumbnail() {
     global $product;
     $image_size = 'fastest_fj-product-grid';
     $image_id   = $product->get_image_id();
-    $image_html = wp_get_attachment_image( $image_id, $image_size, false, array(
-        'class' => 'product-img w-full h-full object-cover transition duration-500',
-    ) );
-    echo '<div class="relative overflow-hidden rounded-lg bg-brand-cream aspect-[4/4] mb-3">';
-    echo $image_html;
-    // Sale badge
+    $image_html = $image_id ? wp_get_attachment_image( $image_id, $image_size, false, array(
+        'class' => 'product-img w-full h-full object-contain group-hover:scale-105 transition duration-500',
+    ) ) : wc_placeholder_img( $image_size, array( 'class' => 'product-img w-full h-full object-contain' ) );
+
+    $in_wishlist = fastest_fj_is_in_wishlist( $product->get_id() );
+
+    echo '<div class="relative overflow-hidden rounded-lg bg-white aspect-square mb-2.5 flex items-center justify-center p-1 border border-gray-100">';
+    echo '<a href="' . esc_url( get_permalink( $product->get_id() ) ) . '" class="block w-full h-full flex items-center justify-center">' . $image_html . '</a>';
+    
+    // Sale badge (Red badge tag - Image 2 style)
     if ( $product->is_on_sale() ) {
-        echo '<div class="absolute top-3 left-3 bg-red-500 text-white text-xs px-2 py-1 rounded font-semibold">' . esc_html__( 'SALE', 'fastest_fj' ) . '</div>';
+        $regular_price = (float) $product->get_regular_price();
+        $sale_price    = (float) $product->get_sale_price();
+        $discount      = ( $regular_price > 0 && $sale_price > 0 ) ? round( ( ( $regular_price - $sale_price ) / $regular_price ) * 100 ) : 0;
+        $discount_text = $discount > 0 ? $discount . '% OFF' : __( 'BLAST OFFER', 'fastest_fj' );
+
+        echo '<div class="absolute top-1.5 right-1.5 z-10 bg-[#D32F2F] text-white text-[10px] leading-tight px-1.5 py-1 rounded font-bold text-center uppercase shadow-sm border border-amber-200 pointer-events-none">';
+        echo '<span class="block text-[8px] text-yellow-300 font-extrabold tracking-tight">' . esc_html__( 'New Year', 'fastest_fj' ) . '</span>';
+        echo '<span class="text-white text-[10px] font-black block">' . esc_html( $discount_text ) . '</span>';
+        echo '</div>';
+    } elseif ( ( time() - strtotime( $product->get_date_created() ) ) < 30 * DAY_IN_SECONDS ) {
+        echo '<div class="absolute top-1.5 right-1.5 z-10 bg-[#D32F2F] text-white text-[10px] leading-tight px-1.5 py-1 rounded font-bold text-center uppercase shadow-sm border border-amber-200 pointer-events-none">';
+        echo '<span class="block text-[8px] text-yellow-300 font-extrabold tracking-tight">' . esc_html__( 'SPECIAL', 'fastest_fj' ) . '</span>';
+        echo '<span class="text-white text-[10px] font-black block">' . esc_html__( 'NEW ARRIVAL', 'fastest_fj' ) . '</span>';
+        echo '</div>';
     }
-    // New badge
-    $created = strtotime( $product->get_date_created() );
-    if ( ( time() - $created ) < 30 * DAY_IN_SECONDS ) {
-        echo '<div class="absolute top-3 left-3 bg-brand-orange text-white text-xs px-2 py-1 rounded font-semibold">' . esc_html__( 'NEW', 'fastest_fj' ) . '</div>';
-    }
+
     // Wishlist button
-    echo '<button class="add-to-wishlist absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center text-gray-600 hover:text-red-500 transition shadow-sm" data-product-id="' . esc_attr( $product->get_id() ) . '"><i class="heart-icon far fa-heart"></i></button>';
-    // Quick add overlay
-    //echo '<div class="add-to-cart absolute bottom-0 left-0 right-0 p-3">';
-    //echo '</div>';
+    $wishlist_class = $in_wishlist ? 'in-wishlist text-red-500' : '';
+    $heart_class = $in_wishlist ? 'fas text-red-500' : 'far';
+    echo '<button class="add-to-wishlist absolute top-1.5 left-1.5 z-10 w-7 h-7 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-500 hover:text-red-500 transition shadow-sm ' . esc_attr( $wishlist_class ) . '" data-product-id="' . esc_attr( $product->get_id() ) . '" title="' . esc_attr__( 'Add to Wishlist', 'fastest_fj' ) . '"><i class="heart-icon ' . esc_attr( $heart_class ) . ' fa-heart text-xs"></i></button>';
+
+    // Quick view button
+    echo '<button class="quick-view-btn absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 bg-white/95 rounded-full flex items-center justify-center text-gray-700 hover:text-brand-gold transition shadow-md opacity-0 group-hover:opacity-100 duration-200" data-product-id="' . esc_attr( $product->get_id() ) . '" title="' . esc_attr__( 'Quick View', 'fastest_fj' ) . '"><i class="fas fa-eye text-xs"></i></button>';
+
     echo '</div>';
 }
 remove_action( 'woocommerce_before_shop_loop_item_title', 'woocommerce_show_product_loop_sale_flash', 10 );
@@ -86,7 +102,12 @@ add_action( 'woocommerce_before_shop_loop_item_title', 'fastest_fj_loop_product_
  */
 function fastest_fj_loop_product_title() {
     global $product;
-    echo '<h3 class="font-serif text-sm sm:text-base font-semibold"><a href="' . esc_url( get_permalink( $product->get_id() ) ) . '" class="hover:text-brand-gold transition">' . esc_html( get_the_title() ) . '</a></h3>';
+    if ( $product->is_on_sale() ) {
+        echo '<div class="text-center text-xs font-semibold text-gray-700 mb-1">' . esc_html__( 'Blast Offer', 'fastest_fj' ) . ' <span class="text-red-600 font-bold">' . wp_kses_post( wc_price( $product->get_price() ) ) . '</span></div>';
+    } else {
+        echo '<div class="text-center text-[11px] font-medium text-gray-500 mb-1 tracking-wide uppercase">' . esc_html__( 'Exclusive Offer', 'fastest_fj' ) . '</div>';
+    }
+    echo '<h3 class="text-xs sm:text-sm font-semibold text-gray-800 hover:text-brand-gold transition tracking-wide uppercase text-center line-clamp-1 mb-1.5"><a href="' . esc_url( get_permalink( $product->get_id() ) ) . '">' . esc_html( get_the_title( $product->get_id() ) ) . '</a></h3>';
 }
 remove_action( 'woocommerce_shop_loop_item_title', 'woocommerce_template_loop_product_title', 10 );
 add_action( 'woocommerce_shop_loop_item_title', 'fastest_fj_loop_product_title', 10 );
@@ -96,28 +117,24 @@ add_action( 'woocommerce_shop_loop_item_title', 'fastest_fj_loop_product_title',
  */
 function fastest_fj_loop_price() {
     global $product;
-    echo '<div class="flex items-center gap-2 mt-1">';
-    echo '<span class="text-brand-orange font-bold text-sm sm:text-base">' . wp_kses_post( $product->get_price_html() ) . '</span>';
+    echo '<div class="flex items-center justify-center gap-2 mb-2 sm:mb-3 text-center">';
+    if ( $product->is_on_sale() && $product->get_regular_price() ) {
+        echo '<span class="line-through text-gray-400 text-xs sm:text-sm font-normal">' . wp_kses_post( wc_price( $product->get_regular_price() ) ) . '</span>';
+    }
+    echo '<span class="text-[#F4A24C] font-bold text-sm sm:text-base">' . wp_kses_post( wc_price( $product->get_price() ) ) . '</span>';
     echo '</div>';
 }
 remove_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10 );
 add_action( 'woocommerce_after_shop_loop_item_title', 'fastest_fj_loop_price', 10 );
 
 /**
- * Remove default add to cart from loop
+ * Remove default add to cart actions from loop hook to prevent duplicate buttons
  */
 remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10 );
 
-/**
- * Custom Add to Cart Button for Loop
- */
 function fastest_fj_loop_add_to_cart() {
-    global $product;
-    // echo '<div class="add-to-cart absolute bottom-0 left-0 right-0 p-3">';
-    // echo '<a href="' . esc_url( $product->add_to_cart_url() ) . '" data-product_id="' . esc_attr( $product->get_id() ) . '" data-quantity="1" class="ajax_add_to_cart button w-full bg-brand-dark text-white py-2 rounded-full text-sm font-semibold hover:bg-brand-gold transition text-center block">' . esc_html( $product->add_to_cart_text() ) . '</a>';
-    // echo '</div>';
+    // Button is rendered directly within content-product.php to prevent duplication
 }
-add_action( 'woocommerce_after_shop_loop_item', 'fastest_fj_loop_add_to_cart', 10 );
 
 /**
  * AJAX Add to Cart Handler

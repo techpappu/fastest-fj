@@ -890,3 +890,23 @@ li.woocommerce-order-overview__order.order {
 		font-size: 20px;
 	}
 }
+
+/* for desktop need 300px */
+@media (min-width: 1024px) {
+    .custom-logo-link{
+        max-width: 200px;
+    }
+}
+
+/* for tablet need 200px */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .custom-logo-link{
+        max-width: 200px;
+    }
+}
+/* for mobile need 150px */
+@media (max-width: 767px) {
+    .custom-logo-link{
+        max-width: 150px;
+    }
+}
