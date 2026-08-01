@@ -95,13 +95,16 @@ while ( have_posts() ) :
                                 </span>
                             <?php endif; endif; ?>
                         </div>
-                        <!-- Add to Cart -->
+                        <!-- Special Offer & Hurry Stock Urgency Section (Before Buy Now) -->
+                        <?php include get_template_directory() . '/inc/single-product-urgency.php'; ?>
+
+                        <!-- Main Buy Now Button -->
                         <?php
                         if ( ! $product->is_type( 'variable' ) ) {
                             $link = sprintf(
-                                '<a href="%s" class="buy-now-button w-full bg-brand-gold text-white py-2 rounded-full text-sm font-semibold hover:bg-brand-dark transition text-center block !text-white mt-2">%s</a>',
+                                '<a href="%s" class="buy-now-button w-full bg-[#F5A647] hover:bg-[#E09335] text-white py-2.5 rounded-full text-sm font-bold uppercase tracking-wider transition text-center block !text-white mt-2 shadow-sm">%s</a>',
                                 esc_url( add_query_arg( 'add-to-cart', $product->get_id(), wc_get_checkout_url() ) ),
-                                esc_html__( 'Buy Now', 'fastest_fj' )
+                                esc_html__( 'BUY NOW', 'fastest_fj' )
                             );
                             echo $link;
                         } else{
@@ -219,6 +222,9 @@ while ( have_posts() ) :
                     </script>
                 <?php endif; ?>
 
+                <!-- Know Your Product & Quality & Care Instructions (2-Grid Layout) -->
+                <?php include get_template_directory() . '/inc/single-product-info-grid.php'; ?>
+
                 <?php 
                 remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10 );
                 do_action('woocommerce_after_single_product_summary');
@@ -226,6 +232,9 @@ while ( have_posts() ) :
             </div>
         </div>
     </main>
+
+    <!-- Sticky Floating Buy Now Bar -->
+    <?php include get_template_directory() . '/inc/single-product-floating-bar.php'; ?>
 
 <?php endwhile; ?>
 
