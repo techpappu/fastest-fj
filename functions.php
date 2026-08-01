@@ -282,3 +282,27 @@ function fastest_fj_admin_notice() {
     }
 }
 add_action( 'admin_notices', 'fastest_fj_admin_notice' );
+
+/**
+ * Speed Optimization: Defer Theme JavaScript Loading for non-blocking DOM parsing
+ */
+function fastest_fj_defer_scripts( $tag, $handle, $src ) {
+    $defer_handles = array( 'fastest_fj-main', 'fastest_fj-wishlist', 'fastest_fj-wc' );
+    if ( in_array( $handle, $defer_handles, true ) ) {
+        return '<script src="' . esc_url( $src ) . '" defer="defer"></script>' . "\n";
+    }
+    return $tag;
+}
+add_filter( 'script_loader_tag', 'fastest_fj_defer_scripts', 10, 3 );
+
+/**
+ * Speed Optimization: Flush Front Page Transients when Products are created/updated
+ */
+function fastest_fj_clear_frontpage_transients() {
+    delete_transient( 'fastest_fj_new_products' );
+    delete_transient( 'fastest_fj_nose_pin_products' );
+    delete_transient( 'fastest_fj_rings_products' );
+}
+add_action( 'woocommerce_update_product', 'fastest_fj_clear_frontpage_transients' );
+add_action( 'woocommerce_new_product', 'fastest_fj_clear_frontpage_transients' );
+add_action( 'woocommerce_delete_product', 'fastest_fj_clear_frontpage_transients' );

@@ -30,9 +30,9 @@ $in_wishlist = fastest_fj_is_in_wishlist( $product->get_id() );
             <a href="<?php echo esc_url( get_permalink( $product->get_id() ) ); ?>" class="block w-full h-full flex items-center justify-center">
                 <?php
                 if ( has_post_thumbnail( $product->get_id() ) ) {
-                    echo wp_kses_post( $product->get_image( 'fastest_fj-product-grid', array( 'class' => 'product-img w-full h-full object-contain group-hover:scale-105 transition duration-500' ) ) );
+                    echo wp_kses_post( $product->get_image( 'fastest_fj-product-grid', array( 'class' => 'product-img w-full h-full object-contain group-hover:scale-105 transition duration-500', 'loading' => 'lazy', 'decoding' => 'async' ) ) );
                 } else {
-                    echo wp_kses_post( wc_placeholder_img( 'fastest_fj-product-grid', array( 'class' => 'product-img w-full h-full object-contain' ) ) );
+                    echo wp_kses_post( wc_placeholder_img( 'fastest_fj-product-grid', array( 'class' => 'product-img w-full h-full object-contain', 'loading' => 'lazy', 'decoding' => 'async' ) ) );
                 }
                 ?>
             </a>

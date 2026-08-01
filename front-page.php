@@ -15,35 +15,45 @@ $featured_categories = get_terms(array(
     'parent' => 0,
 ));
 
-// Get new products
-$new_products = wc_get_products(array(
-    'status' => 'publish',
-    'limit' => 4,
-    'orderby' => 'date',
-    'order' => 'DESC',
-    'stock_status' => 'instock',
-));
-
-// Get nose pin products
-$nose_pin_products = wc_get_products(array(
-    'status' => 'publish',
-    'limit' => 4,
-    'category' => array('nose-pin', 'nosepin', 'nose_pin'),
-    'stock_status' => 'instock',
-));
-if (empty($nose_pin_products)) {
-    $nose_pin_products = $new_products;
+// Transient Caching for Front Page Product Queries (Speed Optimization)
+$new_products = get_transient( 'fastest_fj_new_products' );
+if ( false === $new_products ) {
+    $new_products = wc_get_products(array(
+        'status' => 'publish',
+        'limit' => 4,
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'stock_status' => 'instock',
+    ));
+    set_transient( 'fastest_fj_new_products', $new_products, 12 * HOUR_IN_SECONDS );
 }
 
-// Get rings products
-$rings_products = wc_get_products(array(
-    'status' => 'publish',
-    'limit' => 4,
-    'category' => array('rings', 'ring'),
-    'stock_status' => 'instock',
-));
-if (empty($rings_products)) {
-    $rings_products = $new_products;
+$nose_pin_products = get_transient( 'fastest_fj_nose_pin_products' );
+if ( false === $nose_pin_products ) {
+    $nose_pin_products = wc_get_products(array(
+        'status' => 'publish',
+        'limit' => 4,
+        'category' => array('nose-pin', 'nosepin', 'nose_pin'),
+        'stock_status' => 'instock',
+    ));
+    if (empty($nose_pin_products)) {
+        $nose_pin_products = $new_products;
+    }
+    set_transient( 'fastest_fj_nose_pin_products', $nose_pin_products, 12 * HOUR_IN_SECONDS );
+}
+
+$rings_products = get_transient( 'fastest_fj_rings_products' );
+if ( false === $rings_products ) {
+    $rings_products = wc_get_products(array(
+        'status' => 'publish',
+        'limit' => 4,
+        'category' => array('rings', 'ring'),
+        'stock_status' => 'instock',
+    ));
+    if (empty($rings_products)) {
+        $rings_products = $new_products;
+    }
+    set_transient( 'fastest_fj_rings_products', $rings_products, 12 * HOUR_IN_SECONDS );
 }
 
 $hero_bg = get_theme_mod('fastest_fj_hero_bg', '');
@@ -51,16 +61,16 @@ $hero_bg = get_theme_mod('fastest_fj_hero_bg', '');
 
 <main id="primary" class="site-main">
 
-
-
-    <!-- Hero Section -->
+    <!-- Hero Section (LCP Optimized) -->
     <section class="relative h-[450px] sm:h-[550px] lg:h-[650px] overflow-hidden mb-6">
         <?php if ($hero_bg): ?>
             <img src="<?php echo esc_url($hero_bg); ?>" alt="<?php bloginfo('name'); ?>"
-                class="absolute inset-0 w-full h-full object-cover">
+                class="absolute inset-0 w-full h-full object-cover"
+                loading="eager" fetchpriority="high" decoding="async">
         <?php else: ?>
             <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1600&h=800&fit=crop"
                 alt="Discover Your Timeless Elegance" class="absolute inset-0 w-full h-full object-cover"
+                loading="eager" fetchpriority="high" decoding="async"
                 onerror="this.src='https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=1600&h=800&fit=crop'">
         <?php endif; ?>
         <div class="hero-overlay absolute inset-0 bg-black/40"></div>
