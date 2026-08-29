@@ -40,8 +40,13 @@
                     // Trigger WooCommerce event
                     $(document.body).trigger('wc_fragment_refresh');
                     $(document.body).trigger('added_to_cart', [response.data.fragments, response.data.cart_hash]);
+
+                    if (response.data.campaign) {
+                        updateCampaignBar(response.data.campaign);
+                    }
                 } else {
                     $button.removeClass('loading').text(fastest_fj_ajax.strings.add_to_cart);
+                    showCampaignWarning(response.data && response.data.message ? response.data.message : 'পণ্যটি কার্টে যোগ করা যায়নি।');
                 }
             },
             error: function() {
@@ -49,6 +54,62 @@
             }
         });
     });
+
+    function updateCampaignBar(status) {
+        var $bar = $('#fastest-fj-campaign-bar');
+        if (!$bar.length) return;
+
+        var wasComplete = $bar.attr('data-complete') === '1';
+        $bar.stop(true, true).removeClass('hidden').hide().fadeIn(200);
+        if (status.complete) {
+            $bar.attr('data-complete', '1')
+                .removeClass('bg-amber-400 text-amber-950 bg-red-600')
+                .addClass('bg-green-600 text-white');
+            $bar.find('.campaign-message').html(
+                '✅ <strong>আপনি ' + status.subtotal_text + ' টাকার প্রোডাক্ট যুক্ত করেছেন।</strong> ' +
+                '<a class="ml-3 inline-block rounded bg-white px-4 py-1.5 font-bold text-green-700" href="' + status.checkout_url + '">অর্ডার সম্পন্ন করুন</a>'
+            );
+            if (!wasComplete) playCampaignJoySound();
+        } else {
+            $bar.attr('data-complete', '0')
+                .removeClass('bg-green-600 text-white bg-red-600')
+                .addClass('bg-amber-400 text-amber-950');
+            $bar.find('.campaign-message').html(
+                '<strong>আপনি ' + status.subtotal_text + ' টাকার প্রোডাক্ট যুক্ত করেছেন, অর্ডার করতে আরও ' + status.remaining_text + ' টাকার পণ্য যোগ করুন।</strong>'
+            );
+        }
+    }
+
+    function showCampaignWarning(message) {
+        var $bar = $('#fastest-fj-campaign-bar');
+        if ($bar.length) {
+            $bar.stop(true, true).removeClass('hidden').hide().fadeIn(200);
+            $bar.removeClass('bg-amber-400 bg-green-600 text-amber-950').addClass('bg-red-600 text-white');
+            $bar.find('.campaign-message').html('⚠️ <strong>' + $('<div>').text(message).html() + '</strong>');
+            return;
+        }
+        var $notice = $('<div class="fixed bottom-5 left-1/2 z-[110] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded bg-red-600 px-5 py-3 text-center font-semibold text-white shadow-lg"></div>').text(message);
+        $('body').append($notice);
+        setTimeout(function() { $notice.fadeOut(250, function() { $(this).remove(); }); }, 4000);
+    }
+
+    function playCampaignJoySound() {
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        var context = new AudioContext();
+        [523.25, 659.25, 783.99].forEach(function(frequency, index) {
+            var oscillator = context.createOscillator();
+            var gain = context.createGain();
+            oscillator.connect(gain);
+            gain.connect(context.destination);
+            oscillator.frequency.value = frequency;
+            gain.gain.setValueAtTime(0.0001, context.currentTime + index * 0.11);
+            gain.gain.exponentialRampToValueAtTime(0.16, context.currentTime + index * 0.11 + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + index * 0.11 + 0.28);
+            oscillator.start(context.currentTime + index * 0.11);
+            oscillator.stop(context.currentTime + index * 0.11 + 0.3);
+        });
+    }
 
     // Variation form handling
     $(document).on('found_variation', 'form.variations_form', function(event, variation) {

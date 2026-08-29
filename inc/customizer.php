@@ -55,6 +55,80 @@ function fastest_fj_customize_register( $wp_customize ) {
         ) );
     }
 
+    // Fixed-price category campaign.
+    $wp_customize->add_section( 'fastest_fj_campaign', array(
+        'title'       => __( 'Category Campaign', 'fastest_fj' ),
+        'description' => __( 'Run a fixed-price campaign for one WooCommerce product category.', 'fastest_fj' ),
+        'panel'       => 'fastest_fj_theme_options',
+    ) );
+
+    $wp_customize->add_setting( 'fastest_fj_campaign_enabled', array(
+        'default'           => 0,
+        'sanitize_callback' => 'absint',
+    ) );
+    $wp_customize->add_control( 'fastest_fj_campaign_enabled', array(
+        'label'   => __( 'Enable category campaign', 'fastest_fj' ),
+        'section' => 'fastest_fj_campaign',
+        'type'    => 'checkbox',
+    ) );
+
+    $category_choices = array( 0 => __( 'Select a product category', 'fastest_fj' ) );
+    if ( taxonomy_exists( 'product_cat' ) ) {
+        $product_categories = get_terms( array(
+            'taxonomy'   => 'product_cat',
+            'hide_empty' => false,
+        ) );
+        if ( ! is_wp_error( $product_categories ) ) {
+            foreach ( $product_categories as $product_category ) {
+                $category_choices[ $product_category->term_id ] = $product_category->name;
+            }
+        }
+    }
+
+    $wp_customize->add_setting( 'fastest_fj_campaign_category', array(
+        'default'           => 0,
+        'sanitize_callback' => 'absint',
+    ) );
+    $wp_customize->add_control( 'fastest_fj_campaign_category', array(
+        'label'   => __( 'Campaign product category', 'fastest_fj' ),
+        'section' => 'fastest_fj_campaign',
+        'type'    => 'select',
+        'choices' => $category_choices,
+    ) );
+
+    $wp_customize->add_setting( 'fastest_fj_campaign_price', array(
+        'default'           => 99,
+        'sanitize_callback' => 'fastest_fj_sanitize_positive_price',
+    ) );
+    $wp_customize->add_control( 'fastest_fj_campaign_price', array(
+        'label'       => __( 'Campaign price per product', 'fastest_fj' ),
+        'description' => __( 'Products in the selected category will use this price while the campaign is enabled.', 'fastest_fj' ),
+        'section'     => 'fastest_fj_campaign',
+        'type'        => 'number',
+        'input_attrs' => array( 'min' => 0, 'step' => '0.01' ),
+    ) );
+
+    $wp_customize->add_setting( 'fastest_fj_campaign_minimum_enabled', array(
+        'default'           => 1,
+        'sanitize_callback' => 'absint',
+    ) );
+    $wp_customize->add_control( 'fastest_fj_campaign_minimum_enabled', array(
+        'label'   => __( 'Enable minimum order amount', 'fastest_fj' ),
+        'section' => 'fastest_fj_campaign',
+        'type'    => 'checkbox',
+    ) );
+
+    $wp_customize->add_setting( 'fastest_fj_campaign_minimum_amount', array(
+        'default'           => 499,
+        'sanitize_callback' => 'fastest_fj_sanitize_positive_price',
+    ) );
+    $wp_customize->add_control( 'fastest_fj_campaign_minimum_amount', array(
+        'label'       => __( 'Minimum order amount', 'fastest_fj' ),
+        'section'     => 'fastest_fj_campaign',
+        'type'        => 'number',
+        'input_attrs' => array( 'min' => 0, 'step' => '0.01' ),
+    ) );
+
     // Hero Section
     $wp_customize->add_section( 'fastest_fj_hero', array(
         'title' => __( 'Hero Section', 'fastest_fj' ),
@@ -259,4 +333,8 @@ function fastest_fj_sanitize_product_button( $value ) {
 
 function fastest_fj_sanitize_page_product_button( $value ) {
     return in_array( $value, array( 'inherit', 'buy_now', 'add_to_cart' ), true ) ? $value : 'inherit';
+}
+
+function fastest_fj_sanitize_positive_price( $value ) {
+    return max( 0, (float) $value );
 }

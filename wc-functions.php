@@ -136,10 +136,150 @@ function fastest_fj_loop_add_to_cart() {
     // Button is rendered directly within content-product.php to prevent duplication
 }
 
+/** Whether the fixed-price category campaign is ready to run. */
+function fastest_fj_campaign_is_enabled() {
+    return (bool) get_theme_mod( 'fastest_fj_campaign_enabled', 0 )
+        && get_theme_mod( 'fastest_fj_campaign_category', 0 ) > 0;
+}
+
+/** Whether a product (or variation's parent) belongs to the campaign category. */
+function fastest_fj_is_campaign_product( $product_or_id ) {
+    if ( ! fastest_fj_campaign_is_enabled() ) {
+        return false;
+    }
+
+    $product = is_a( $product_or_id, 'WC_Product' ) ? $product_or_id : wc_get_product( $product_or_id );
+    if ( ! $product ) {
+        return false;
+    }
+
+    $product_id = $product->is_type( 'variation' ) ? $product->get_parent_id() : $product->get_id();
+    return has_term( (int) get_theme_mod( 'fastest_fj_campaign_category', 0 ), 'product_cat', $product_id );
+}
+
+/** Apply the campaign price everywhere WooCommerce reads a product price. */
+function fastest_fj_campaign_product_price( $price, $product ) {
+    if ( is_admin() && ! wp_doing_ajax() ) {
+        return $price;
+    }
+    if ( fastest_fj_is_campaign_product( $product ) ) {
+        return (string) get_theme_mod( 'fastest_fj_campaign_price', 99 );
+    }
+    return $price;
+}
+add_filter( 'woocommerce_product_get_price', 'fastest_fj_campaign_product_price', 20, 2 );
+add_filter( 'woocommerce_product_get_sale_price', 'fastest_fj_campaign_product_price', 20, 2 );
+add_filter( 'woocommerce_product_variation_get_price', 'fastest_fj_campaign_product_price', 20, 2 );
+add_filter( 'woocommerce_product_variation_get_sale_price', 'fastest_fj_campaign_product_price', 20, 2 );
+
+function fastest_fj_campaign_set_cart_prices( $cart ) {
+    if ( is_admin() && ! wp_doing_ajax() ) {
+        return;
+    }
+    foreach ( $cart->get_cart() as $cart_item ) {
+        if ( isset( $cart_item['data'] ) && fastest_fj_is_campaign_product( $cart_item['data'] ) ) {
+            $cart_item['data']->set_price( (float) get_theme_mod( 'fastest_fj_campaign_price', 99 ) );
+        }
+    }
+}
+add_action( 'woocommerce_before_calculate_totals', 'fastest_fj_campaign_set_cart_prices', 20 );
+
+/** Campaign products may only have one unit in the cart. */
+function fastest_fj_campaign_sold_individually( $sold_individually, $product ) {
+    return fastest_fj_is_campaign_product( $product ) ? true : $sold_individually;
+}
+add_filter( 'woocommerce_is_sold_individually', 'fastest_fj_campaign_sold_individually', 20, 2 );
+
+/** Show the campaign-specific warning when an existing item is added again. */
+function fastest_fj_campaign_validate_single_quantity( $passed, $product_id, $quantity, $variation_id = 0 ) {
+    $check_product = $variation_id ? wc_get_product( $variation_id ) : wc_get_product( $product_id );
+    if ( ! fastest_fj_is_campaign_product( $check_product ) || ! WC()->cart ) {
+        return $passed;
+    }
+
+    foreach ( WC()->cart->get_cart() as $cart_item ) {
+        if ( (int) $cart_item['product_id'] === (int) $product_id ) {
+            wc_add_notice( '⚠️ এই ক্যাম্পেইনের একই পণ্য দুইটি যোগ করা যাবে না। প্রতি পণ্য শুধুমাত্র একটি করে যোগ করতে পারবেন।', 'error' );
+            return false;
+        }
+    }
+    return $passed;
+}
+add_filter( 'woocommerce_add_to_cart_validation', 'fastest_fj_campaign_validate_single_quantity', 20, 4 );
+
+/** Return a plain amount with the requested taka suffix. */
+function fastest_fj_campaign_taka( $amount ) {
+    return wc_format_localized_price( (float) $amount ) . '৳';
+}
+
+/** Current campaign minimum-order status. */
+function fastest_fj_campaign_cart_status() {
+    $subtotal = WC()->cart ? (float) WC()->cart->get_subtotal() : 0;
+    $minimum  = (float) get_theme_mod( 'fastest_fj_campaign_minimum_amount', 499 );
+
+    return array(
+        'subtotal'      => $subtotal,
+        'subtotal_text' => fastest_fj_campaign_taka( $subtotal ),
+        'minimum'       => $minimum,
+        'minimum_text'  => fastest_fj_campaign_taka( $minimum ),
+        'remaining'     => max( 0, $minimum - $subtotal ),
+        'remaining_text'=> fastest_fj_campaign_taka( max( 0, $minimum - $subtotal ) ),
+        'complete'      => $subtotal >= $minimum,
+        'checkout_url'  => wc_get_checkout_url(),
+    );
+}
+
+/** Prevent checkout while the enabled minimum is not reached. */
+function fastest_fj_campaign_validate_minimum_order() {
+    if ( ! fastest_fj_campaign_is_enabled() || ! get_theme_mod( 'fastest_fj_campaign_minimum_enabled', 1 ) || ! WC()->cart ) {
+        return;
+    }
+
+    $status = fastest_fj_campaign_cart_status();
+    if ( ! $status['complete'] ) {
+        wc_add_notice(
+            sprintf(
+                '⚠️ আপনাকে কমপক্ষে %1$s টাকার অর্ডার করতে হবে। আপনার কার্টে %2$s টাকার পণ্য যুক্ত করেছেন।',
+                esc_html( $status['minimum_text'] ),
+                esc_html( $status['subtotal_text'] )
+            ),
+            'error'
+        );
+    }
+}
+add_action( 'woocommerce_check_cart_items', 'fastest_fj_campaign_validate_minimum_order' );
+
+/** Hidden campaign progress bar; JavaScript reveals it after an add-to-cart action. */
+function fastest_fj_campaign_progress_bar() {
+    if ( ! fastest_fj_campaign_is_enabled() || ! get_theme_mod( 'fastest_fj_campaign_minimum_enabled', 1 ) ) {
+        return;
+    }
+
+    $status = fastest_fj_campaign_cart_status();
+    ?>
+    <div id="fastest-fj-campaign-bar" class="hidden fixed bottom-0 left-0 right-0 z-[100] px-4 py-3 text-center text-sm sm:text-base font-semibold shadow-[0_-4px_18px_rgba(0,0,0,0.18)] <?php echo $status['complete'] ? 'bg-green-600 text-white' : 'bg-amber-400 text-amber-950'; ?>"
+         data-complete="<?php echo $status['complete'] ? '1' : '0'; ?>">
+        <div class="campaign-message">
+            <?php if ( $status['complete'] ) : ?>
+                ✅ <strong>আপনি <?php echo esc_html( $status['subtotal_text'] ); ?> টাকার প্রোডাক্ট যুক্ত করেছেন।</strong>
+                <a class="ml-3 inline-block rounded bg-white px-4 py-1.5 font-bold text-green-700" href="<?php echo esc_url( $status['checkout_url'] ); ?>">অর্ডার সম্পন্ন করুন</a>
+            <?php else : ?>
+                <strong>আপনি <?php echo esc_html( $status['subtotal_text'] ); ?> টাকার প্রোডাক্ট যুক্ত করেছেন, অর্ডার করতে আরও <?php echo esc_html( $status['remaining_text'] ); ?> টাকার পণ্য যোগ করুন।</strong>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php
+}
+add_action( 'wp_footer', 'fastest_fj_campaign_progress_bar', 20 );
+
 /** Return the configured action for product cards in the current request. */
 function fastest_fj_get_product_card_action() {
     $default_action = get_theme_mod( 'fastest_fj_archive_product_button', 'buy_now' );
     $default_action = 'add_to_cart' === $default_action ? 'add_to_cart' : 'buy_now';
+
+    if ( fastest_fj_campaign_is_enabled() && is_product_category( (int) get_theme_mod( 'fastest_fj_campaign_category', 0 ) ) ) {
+        return 'add_to_cart';
+    }
 
     // WooCommerce treats its assigned Shop page as an archive, so is_page()
     // is false there. Resolve its real page ID so its Customizer override works.
@@ -170,12 +310,25 @@ function fastest_fj_ajax_add_to_cart() {
     $variation_id = isset( $_POST['variation_id'] ) ? intval( $_POST['variation_id'] ) : 0;
 
     if ( $product_id > 0 ) {
+        $campaign_product = $variation_id ? wc_get_product( $variation_id ) : wc_get_product( $product_id );
+        if ( fastest_fj_is_campaign_product( $campaign_product ) ) {
+            foreach ( WC()->cart->get_cart() as $cart_item ) {
+                if ( (int) $cart_item['product_id'] === $product_id ) {
+                    wp_send_json_error( array(
+                        'code'    => 'campaign_duplicate',
+                        'message' => 'এই ক্যাম্পেইনের একই পণ্য দুইটি যোগ করা যাবে না। প্রতি পণ্য শুধুমাত্র একটি করে যোগ করতে পারবেন।',
+                    ) );
+                }
+            }
+        }
+
         $added = WC()->cart->add_to_cart( $product_id, $quantity, $variation_id );
         if ( $added ) {
             wp_send_json_success( array(
                 'message'     => __( 'Added to cart!', 'fastest_fj' ),
                 'cart_count'  => WC()->cart->get_cart_contents_count(),
                 'cart_total'  => WC()->cart->get_cart_total(),
+                'campaign'    => fastest_fj_campaign_is_enabled() && get_theme_mod( 'fastest_fj_campaign_minimum_enabled', 1 ) ? fastest_fj_campaign_cart_status() : false,
                 'fragments'   => apply_filters( 'woocommerce_add_to_cart_fragments', array() ),
             ) );
         }
