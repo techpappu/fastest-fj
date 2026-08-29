@@ -894,6 +894,7 @@ li.woocommerce-order-overview__order.order {
 /* for desktop need 300px */
 @media (min-width: 1024px) {
     .custom-logo-link{
+        width: 200px;
         max-width: 200px;
     }
 }
@@ -901,12 +902,22 @@ li.woocommerce-order-overview__order.order {
 /* for tablet need 200px */
 @media (min-width: 768px) and (max-width: 1023px) {
     .custom-logo-link{
+        width: 200px;
         max-width: 200px;
     }
 }
 /* for mobile need 150px */
 @media (max-width: 767px) {
     .custom-logo-link{
+        width: 150px;
         max-width: 150px;
     }
+}
+
+.custom-logo-link .custom-logo {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 80px;
+    object-fit: contain;
 }

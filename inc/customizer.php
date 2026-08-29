@@ -13,6 +13,60 @@ function fastest_fj_customize_register( $wp_customize ) {
         'priority' => 30,
     ) );
 
+    // Product loop buttons.
+    $wp_customize->add_section( 'fastest_fj_product_buttons', array(
+        'title'       => __( 'Product Card Buttons', 'fastest_fj' ),
+        'description' => __( 'Choose what product cards do on WooCommerce archives and on product grids added to WordPress pages.', 'fastest_fj' ),
+        'panel'       => 'fastest_fj_theme_options',
+    ) );
+
+    $button_choices = array(
+        'buy_now'     => __( 'Buy Now (go to checkout)', 'fastest_fj' ),
+        'add_to_cart' => __( 'Add to Cart', 'fastest_fj' ),
+    );
+
+    $wp_customize->add_setting( 'fastest_fj_archive_product_button', array(
+        'default'           => 'buy_now',
+        'sanitize_callback' => 'fastest_fj_sanitize_product_button',
+    ) );
+    $wp_customize->add_control( 'fastest_fj_archive_product_button', array(
+        'label'       => __( 'Shop and category pages', 'fastest_fj' ),
+        'description' => __( 'Applies to the Shop page, product categories, tags, and other product archives.', 'fastest_fj' ),
+        'section'     => 'fastest_fj_product_buttons',
+        'type'        => 'select',
+        'choices'     => $button_choices,
+    ) );
+
+    $wp_customize->add_setting( 'fastest_fj_page_product_button', array(
+        'default'           => 'buy_now',
+        'sanitize_callback' => 'fastest_fj_sanitize_product_button',
+    ) );
+    $wp_customize->add_control( 'fastest_fj_page_product_button', array(
+        'label'       => __( 'Product grids on WordPress pages', 'fastest_fj' ),
+        'description' => __( 'Default for WooCommerce blocks, shortcodes, or template product loops displayed on a page.', 'fastest_fj' ),
+        'section'     => 'fastest_fj_product_buttons',
+        'type'        => 'select',
+        'choices'     => $button_choices,
+    ) );
+
+    $page_choices = array_merge( array(
+        'inherit' => __( 'Use page-grid default', 'fastest_fj' ),
+    ), $button_choices );
+
+    foreach ( get_pages( array( 'post_status' => 'publish' ) ) as $product_button_page ) {
+        $setting_id = 'fastest_fj_page_product_button_' . $product_button_page->ID;
+        $wp_customize->add_setting( $setting_id, array(
+            'default'           => 'inherit',
+            'sanitize_callback' => 'fastest_fj_sanitize_page_product_button',
+        ) );
+        $wp_customize->add_control( $setting_id, array(
+            'label'   => sprintf( __( 'Page: %s', 'fastest_fj' ), $product_button_page->post_title ),
+            'section' => 'fastest_fj_product_buttons',
+            'type'    => 'select',
+            'choices' => $page_choices,
+        ) );
+    }
+
     // Hero Section
     $wp_customize->add_section( 'fastest_fj_hero', array(
         'title' => __( 'Hero Section', 'fastest_fj' ),
@@ -210,3 +264,11 @@ function fastest_fj_customize_register( $wp_customize ) {
     }
 }
 add_action( 'customize_register', 'fastest_fj_customize_register' );
+
+function fastest_fj_sanitize_product_button( $value ) {
+    return in_array( $value, array( 'buy_now', 'add_to_cart' ), true ) ? $value : 'buy_now';
+}
+
+function fastest_fj_sanitize_page_product_button( $value ) {
+    return in_array( $value, array( 'inherit', 'buy_now', 'add_to_cart' ), true ) ? $value : 'inherit';
+}

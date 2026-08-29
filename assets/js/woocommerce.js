@@ -6,7 +6,8 @@
     'use strict';
 
     // AJAX Add to Cart
-    $(document).on('click', '.ajax_add_to_cart', function(e) {
+    $(document).on('click', '.fastest_fj_ajax_add_to_cart', function(e) {
+        e.preventDefault();
         var $button = $(this);
         if ($button.hasClass('loading')) return;
 

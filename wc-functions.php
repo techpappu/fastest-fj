@@ -136,6 +136,23 @@ function fastest_fj_loop_add_to_cart() {
     // Button is rendered directly within content-product.php to prevent duplication
 }
 
+/** Return the configured action for product cards in the current request. */
+function fastest_fj_get_product_card_action() {
+    if ( is_shop() || is_product_taxonomy() || is_post_type_archive( 'product' ) ) {
+        return get_theme_mod( 'fastest_fj_archive_product_button', 'buy_now' );
+    }
+
+    if ( is_page() ) {
+        $override = get_theme_mod( 'fastest_fj_page_product_button_' . get_queried_object_id(), 'inherit' );
+        if ( in_array( $override, array( 'buy_now', 'add_to_cart' ), true ) ) {
+            return $override;
+        }
+        return get_theme_mod( 'fastest_fj_page_product_button', 'buy_now' );
+    }
+
+    return 'buy_now';
+}
+
 /**
  * AJAX Add to Cart Handler
  */

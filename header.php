@@ -15,6 +15,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <style id="fastest-fj-critical-logo-css">
+        .custom-logo-link{display:block;flex:0 0 auto;width:200px;max-width:200px}
+        .custom-logo-link .custom-logo{display:block;width:100%;height:auto;max-height:80px;object-fit:contain}
+        @media (max-width:767px){.custom-logo-link{width:150px;max-width:150px}}
+    </style>
     <?php wp_head(); ?>
 </head>
 

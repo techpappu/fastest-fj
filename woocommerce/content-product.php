@@ -99,15 +99,40 @@ $in_wishlist = fastest_fj_is_in_wishlist( $product->get_id() );
         </div>
     </div>
 
-    <!-- Action Button (Buy Now - Pill Shape) -->
+    <!-- Configurable product action button -->
     <div class="mt-auto pt-1">
-        <?php if ( $product->is_in_stock() ) : 
+        <?php if ( $product->is_in_stock() ) :
+            $card_action = fastest_fj_get_product_card_action();
+            if ( 'add_to_cart' === $card_action ) :
+                echo wp_kses_post( apply_filters(
+                    'woocommerce_loop_add_to_cart_link',
+                    sprintf(
+                        '<a href="%s" data-quantity="1" class="%s w-full bg-[#F5A647] hover:bg-[#E09335] text-white py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider text-center block transition duration-200 shadow-sm border-0 !text-white" %s>%s</a>',
+                        esc_url( $product->add_to_cart_url() ),
+                        esc_attr( implode( ' ', array_filter( array(
+                            'button',
+                            'product_type_' . $product->get_type(),
+                            $product->supports( 'ajax_add_to_cart' ) && $product->is_purchasable() ? 'fastest_fj_ajax_add_to_cart' : '',
+                        ) ) ) ),
+                        wc_implode_html_attributes( array(
+                            'data-product_id'  => $product->get_id(),
+                            'data-product_sku' => $product->get_sku(),
+                            'aria-label'       => $product->add_to_cart_description(),
+                            'rel'              => 'nofollow',
+                        ) ),
+                        esc_html( $product->add_to_cart_text() )
+                    ),
+                    $product,
+                    array()
+                ) );
+            else :
             $buy_now_url = $product->is_type( 'variable' ) ? get_permalink( $product->get_id() ) : add_query_arg( 'add-to-cart', $product->get_id(), wc_get_checkout_url() );
         ?>
             <a href="<?php echo esc_url( $buy_now_url ); ?>" 
                class="buy-now-button w-full bg-[#F5A647] hover:bg-[#E09335] text-white py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider text-center block transition duration-200 shadow-sm border-0 !text-white">
                 <?php esc_html_e( 'BUY NOW', 'fastest_fj' ); ?>
             </a>
+            <?php endif; ?>
         <?php else : ?>
             <span class="w-full bg-gray-200 text-gray-500 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold uppercase tracking-wider text-center block opacity-75 cursor-not-allowed">
                 <?php esc_html_e( 'Out of Stock', 'fastest_fj' ); ?>

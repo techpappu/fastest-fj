@@ -88,6 +88,10 @@ $cartflow_order_cta = function ($direction = 'down', $wrap_class = 'mt-7') use (
 	<meta charset="<?php bloginfo('charset'); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="profile" href="https://gmpg.org/xfn/11">
+	<style id="fastest-fj-critical-logo-css">
+		.custom-logo-link{display:block;width:150px;max-width:150px}
+		.custom-logo-link .custom-logo{display:block;width:100%;height:auto;max-height:80px;object-fit:contain}
+	</style>
 	<?php wp_head(); ?>
 </head>
 
