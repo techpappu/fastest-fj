@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Theme version
-define('fastest_fj_VERSION', '1.0.1');
+define('fastest_fj_VERSION', '1.0.2');
 
 /**
  * Theme Setup

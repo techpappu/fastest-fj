@@ -233,7 +233,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Add to Cart Button */
 .woocommerce ul.products li.product .button {
-    background-color: #1E1E1E;
+    background-color: #F5A647;
     color: white;
     border-radius: 9999px;
     padding: 0.5rem 1rem;
