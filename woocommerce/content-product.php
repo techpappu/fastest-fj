@@ -103,6 +103,7 @@ $in_wishlist = fastest_fj_is_in_wishlist( $product->get_id() );
     <div class="mt-auto pt-1">
         <?php if ( $product->is_in_stock() ) :
             $card_action = fastest_fj_get_product_card_action();
+            echo '<!-- fastest_fj product-card action: ' . esc_html( $card_action ) . ' -->';
             if ( 'add_to_cart' === $card_action ) :
                 echo wp_kses_post( apply_filters(
                     'woocommerce_loop_add_to_cart_link',

@@ -138,19 +138,26 @@ function fastest_fj_loop_add_to_cart() {
 
 /** Return the configured action for product cards in the current request. */
 function fastest_fj_get_product_card_action() {
-    if ( is_shop() || is_product_taxonomy() || is_post_type_archive( 'product' ) ) {
-        return get_theme_mod( 'fastest_fj_archive_product_button', 'buy_now' );
+    $default_action = get_theme_mod( 'fastest_fj_archive_product_button', 'buy_now' );
+    $default_action = 'add_to_cart' === $default_action ? 'add_to_cart' : 'buy_now';
+
+    // WooCommerce treats its assigned Shop page as an archive, so is_page()
+    // is false there. Resolve its real page ID so its Customizer override works.
+    $context_page_id = 0;
+    if ( is_shop() ) {
+        $context_page_id = wc_get_page_id( 'shop' );
+    } elseif ( is_page() ) {
+        $context_page_id = get_queried_object_id();
     }
 
-    if ( is_page() ) {
-        $override = get_theme_mod( 'fastest_fj_page_product_button_' . get_queried_object_id(), 'inherit' );
+    if ( $context_page_id > 0 ) {
+        $override = get_theme_mod( 'fastest_fj_page_product_button_' . $context_page_id, 'inherit' );
         if ( in_array( $override, array( 'buy_now', 'add_to_cart' ), true ) ) {
             return $override;
         }
-        return get_theme_mod( 'fastest_fj_page_product_button', 'buy_now' );
     }
 
-    return 'buy_now';
+    return $default_action;
 }
 
 /**

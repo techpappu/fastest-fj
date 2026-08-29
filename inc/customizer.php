@@ -30,27 +30,15 @@ function fastest_fj_customize_register( $wp_customize ) {
         'sanitize_callback' => 'fastest_fj_sanitize_product_button',
     ) );
     $wp_customize->add_control( 'fastest_fj_archive_product_button', array(
-        'label'       => __( 'Shop and category pages', 'fastest_fj' ),
-        'description' => __( 'Applies to the Shop page, product categories, tags, and other product archives.', 'fastest_fj' ),
-        'section'     => 'fastest_fj_product_buttons',
-        'type'        => 'select',
-        'choices'     => $button_choices,
-    ) );
-
-    $wp_customize->add_setting( 'fastest_fj_page_product_button', array(
-        'default'           => 'buy_now',
-        'sanitize_callback' => 'fastest_fj_sanitize_product_button',
-    ) );
-    $wp_customize->add_control( 'fastest_fj_page_product_button', array(
-        'label'       => __( 'Product grids on WordPress pages', 'fastest_fj' ),
-        'description' => __( 'Default for WooCommerce blocks, shortcodes, or template product loops displayed on a page.', 'fastest_fj' ),
+        'label'       => __( 'Default button on all product cards', 'fastest_fj' ),
+        'description' => __( 'Applies everywhere, including Shop, categories, the homepage, templates, blocks, and shortcodes. An individual page choice below can override it.', 'fastest_fj' ),
         'section'     => 'fastest_fj_product_buttons',
         'type'        => 'select',
         'choices'     => $button_choices,
     ) );
 
     $page_choices = array_merge( array(
-        'inherit' => __( 'Use page-grid default', 'fastest_fj' ),
+        'inherit' => __( 'Use default product-card button', 'fastest_fj' ),
     ), $button_choices );
 
     foreach ( get_pages( array( 'post_status' => 'publish' ) ) as $product_button_page ) {
