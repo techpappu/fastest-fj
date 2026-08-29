@@ -16,7 +16,7 @@ if ( empty( $product ) || ! $product->is_visible() ) {
 
 $in_wishlist = fastest_fj_is_in_wishlist( $product->get_id() );
 ?>
-<div <?php wc_product_class( 'product-card group relative bg-white border border-[#E5C384] hover:border-brand-orange/70 rounded-none p-2.5 sm:p-3 flex flex-col justify-between transition-all duration-300 shadow-sm hover:shadow-md h-full', $product ); ?>>
+<li <?php wc_product_class( 'product-card group relative bg-white border border-[#E5C384] hover:border-brand-orange/70 rounded-none p-2.5 sm:p-3 flex flex-col justify-between transition-all duration-300 shadow-sm hover:shadow-md h-full', $product ); ?>>
     <?php
     /**
      * Hook: woocommerce_before_shop_loop_item.
@@ -147,4 +147,4 @@ $in_wishlist = fastest_fj_is_in_wishlist( $product->get_id() );
      */
     do_action( 'woocommerce_after_shop_loop_item' );
     ?>
-</div>
+</li>

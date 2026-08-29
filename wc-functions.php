@@ -16,6 +16,11 @@ function fastest_fj_loop_columns() {
 }
 add_filter( 'loop_shop_columns', 'fastest_fj_loop_columns', 20 );
 
+/* The custom card contains its own links; prevent WooCommerce from wrapping
+ * the entire card in another anchor (which creates invalid nested markup). */
+remove_action( 'woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open', 10 );
+remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
+
 /**
  * WooCommerce Related Products
  */
