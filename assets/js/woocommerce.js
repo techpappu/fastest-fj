@@ -29,8 +29,7 @@
             },
             success: function(response) {
                 if (response.success) {
-                    $button.removeClass('loading').text(fastest_fj_ajax.strings.view_cart);
-                    $button.after('<a href="' + wc_add_to_cart_params.cart_url + '" class="block text-center text-brand-gold text-xs mt-1 hover:underline">' + fastest_fj_ajax.strings.view_cart + '</a>');
+                    $button.removeClass('loading').text(fastest_fj_ajax.strings.add_to_cart);
 
                     // Update cart count
                     if (response.data.cart_count !== undefined) {
@@ -66,16 +65,19 @@
                 .removeClass('bg-amber-400 text-amber-950 bg-red-600')
                 .addClass('bg-green-600 text-white');
             $bar.find('.campaign-message').html(
-                '✅ <strong>আপনি ' + status.subtotal_text + ' টাকার প্রোডাক্ট যুক্ত করেছেন।</strong> ' +
+                '✅ <strong>আপনি <span class="campaign-amount">' + status.subtotal_text + '</span> টাকার প্রোডাক্ট যুক্ত করেছেন।</strong> ' +
                 '<a class="ml-3 inline-block rounded bg-white px-4 py-1.5 font-bold text-green-700" href="' + status.checkout_url + '">অর্ডার সম্পন্ন করুন</a>'
             );
-            if (!wasComplete) playCampaignJoySound();
+            if (!wasComplete) {
+                playCampaignJoySound();
+                showCampaignCelebration(status.subtotal_text);
+            }
         } else {
             $bar.attr('data-complete', '0')
                 .removeClass('bg-green-600 text-white bg-red-600')
                 .addClass('bg-amber-400 text-amber-950');
             $bar.find('.campaign-message').html(
-                '<strong>আপনি ' + status.subtotal_text + ' টাকার প্রোডাক্ট যুক্ত করেছেন, অর্ডার করতে আরও ' + status.remaining_text + ' টাকার পণ্য যোগ করুন।</strong>'
+                '<strong>আপনি <span class="campaign-amount">' + status.subtotal_text + '</span> টাকার প্রোডাক্ট যুক্ত করেছেন, অর্ডার করতে আরও <span class="campaign-amount">' + status.remaining_text + '</span> টাকার পণ্য যোগ করুন।</strong>'
             );
         }
     }
@@ -109,6 +111,28 @@
             oscillator.start(context.currentTime + index * 0.11);
             oscillator.stop(context.currentTime + index * 0.11 + 0.3);
         });
+    }
+
+    function showCampaignCelebration(totalText) {
+        $('#fastest-fj-campaign-celebration').remove();
+        var confetti = '';
+        for (var i = 0; i < 28; i++) {
+            confetti += '<i style="--x:' + (Math.random() * 100) + '%;--delay:' + (Math.random() * 0.5) + 's;--color:' + ['#fbbf24', '#22c55e', '#ec4899', '#38bdf8', '#ffffff'][i % 5] + '"></i>';
+        }
+        var $celebration = $(
+            '<div id="fastest-fj-campaign-celebration" role="status">' +
+                '<div class="campaign-celebration-flash"></div>' +
+                '<div class="campaign-confetti">' + confetti + '</div>' +
+                '<div class="campaign-celebration-card">' +
+                    '<div class="campaign-celebration-icon">🎉</div>' +
+                    '<strong>অভিনন্দন!</strong>' +
+                    '<span>আপনি <b>' + totalText + '</b> টাকার অর্ডার পূর্ণ করেছেন</span>' +
+                '</div>' +
+            '</div>'
+        );
+        $('body').append($celebration);
+        setTimeout(function() { $celebration.addClass('is-leaving'); }, 2200);
+        setTimeout(function() { $celebration.remove(); }, 2800);
     }
 
     // Variation form handling

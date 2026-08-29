@@ -261,10 +261,10 @@ function fastest_fj_campaign_progress_bar() {
          data-complete="<?php echo $status['complete'] ? '1' : '0'; ?>">
         <div class="campaign-message">
             <?php if ( $status['complete'] ) : ?>
-                ✅ <strong>আপনি <?php echo esc_html( $status['subtotal_text'] ); ?> টাকার প্রোডাক্ট যুক্ত করেছেন।</strong>
+                ✅ <strong>আপনি <span class="campaign-amount"><?php echo esc_html( $status['subtotal_text'] ); ?></span> টাকার প্রোডাক্ট যুক্ত করেছেন।</strong>
                 <a class="ml-3 inline-block rounded bg-white px-4 py-1.5 font-bold text-green-700" href="<?php echo esc_url( $status['checkout_url'] ); ?>">অর্ডার সম্পন্ন করুন</a>
             <?php else : ?>
-                <strong>আপনি <?php echo esc_html( $status['subtotal_text'] ); ?> টাকার প্রোডাক্ট যুক্ত করেছেন, অর্ডার করতে আরও <?php echo esc_html( $status['remaining_text'] ); ?> টাকার পণ্য যোগ করুন।</strong>
+                <strong>আপনি <span class="campaign-amount"><?php echo esc_html( $status['subtotal_text'] ); ?></span> টাকার প্রোডাক্ট যুক্ত করেছেন, অর্ডার করতে আরও <span class="campaign-amount"><?php echo esc_html( $status['remaining_text'] ); ?></span> টাকার পণ্য যোগ করুন।</strong>
             <?php endif; ?>
         </div>
     </div>
