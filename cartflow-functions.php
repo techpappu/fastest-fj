@@ -550,8 +550,8 @@ function fastest_fj_cartflow_meta_box( $post ) {
 		'faq_title'          => array( 'FAQ Section Title', 'text', '' ),
 		'guarantee_title'    => array( 'Guarantee Title', 'text', '' ),
 		'guarantee_desc'     => array( 'Guarantee Description', 'textarea', '' ),
-		'final_cta_title'    => array( 'Final CTA Title', 'text', '' ),
-		'final_cta_desc'     => array( 'Final CTA Description', 'textarea', '' ),
+		'final_cta_title'    => array( 'Final CTA Title', 'textarea', 'Safe HTML is allowed.' ),
+		'final_cta_desc'     => array( 'Final CTA Description', 'textarea', 'Safe HTML is allowed.' ),
 		'cta_button'         => array( 'CTA Button Text', 'text', '' ),
 		'show_sticky'        => array( 'Show Sticky Bottom Bar', 'checkbox', '' ),
 		'sticky_bar'         => array( 'Sticky Bar Text', 'text', '' ),
@@ -607,7 +607,8 @@ function fastest_fj_cartflow_save_meta( $post_id ) {
 			$value = isset( $posted[ $key ] ) ? '1' : '0';
 		} else {
 			$value = isset( $posted[ $key ] ) ? (string) $posted[ $key ] : '';
-			$value = 'scarcity_desc' === $key ? wp_kses_post( $value ) : sanitize_textarea_field( $value );
+			$html_fields = array( 'scarcity_desc', 'final_cta_title', 'final_cta_desc' );
+			$value       = in_array( $key, $html_fields, true ) ? wp_kses_post( $value ) : sanitize_textarea_field( $value );
 		}
 
 		update_post_meta( $post_id, fastest_fj_cartflow_meta_key( $key ), $value );
