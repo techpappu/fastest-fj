@@ -36,7 +36,9 @@ $badges = fastest_fj_cartflow_parse_lines(fastest_fj_cartflow_get('badges', $pos
 $benefits = fastest_fj_cartflow_parse_lines(fastest_fj_cartflow_get('benefits', $post_id), array('icon', 'title', 'desc'));
 $testimonials = fastest_fj_cartflow_parse_lines(fastest_fj_cartflow_get('testimonials', $post_id), array('name', 'loc', 'stars', 'text'));
 $faq_items = fastest_fj_cartflow_parse_lines(fastest_fj_cartflow_get('faqs', $post_id), array('q', 'a'));
-$phone_href = preg_replace('/[^0-9+]/', '', $phone_number);
+$phone_raw = $phone_number ?: $sticky_bar;
+$phone_digits = str_replace(array('০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'), array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'), (string) $phone_raw);
+$phone_href = preg_replace('/[^0-9+]/', '', $phone_digits);
 $product_name = get_the_title($post_id);
 $product_image = get_the_post_thumbnail_url($post_id, 'large');
 $product_ids = fastest_fj_cartflow_product_ids($post_id);
@@ -119,6 +121,10 @@ $cartflow_order_cta = function ($direction = 'down', $wrap_class = 'mt-7') use (
 			border-radius: 10px;
 			margin: 10px;
 		}
+
+		.cartflow-sticky-call:hover .cartflow-sticky-call__icon {
+			color: #fff !important;
+		}
 	</style>
 	<?php wp_head(); ?>
 </head>
@@ -176,6 +182,19 @@ $cartflow_order_cta = function ($direction = 'down', $wrap_class = 'mt-7') use (
 					<?php echo wp_kses_post($final_cta_desc); ?>
 				</div>
 				<?php $cartflow_order_cta('down', 'mt-0'); ?>
+
+				<?php if ($phone_number): ?>
+				<a href="tel:<?php echo esc_attr($phone_href); ?>" class="group mx-auto mt-4 block max-w-sm no-underline">
+					<div class="relative overflow-hidden rounded-xl border-2 border-brand-gold bg-gradient-to-br from-[#2b2518] via-[#17140e] to-[#090909] px-4 py-4 text-center shadow-[0_0_0_3px_rgba(201,169,97,0.08),0_12px_32px_rgba(201,169,97,0.22)] transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_0_0_4px_rgba(201,169,97,0.12),0_16px_38px_rgba(201,169,97,0.32)] before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-white before:to-transparent">
+						<div class="relative font-serif text-base font-bold leading-tight text-white"><?php esc_html_e('অর্ডার করতে সরাসরি কল করুন', 'fastest_fj'); ?></div>
+						<div class="relative mt-1 text-[11px] leading-4 text-white/60"><?php esc_html_e('মিনিট দিয়েই কল করুন। সাধারণ কল চার্জ প্রযোজ্য।', 'fastest_fj'); ?></div>
+						<div class="relative mt-2.5 inline-flex items-center gap-2 rounded-full bg-brand-gold px-6 py-1.5 text-sm font-extrabold tracking-wide text-[#111] shadow-[0_4px_16px_rgba(201,169,97,0.42)] transition duration-300 group-hover:bg-white group-hover:shadow-[0_5px_20px_rgba(255,255,255,0.2)] sm:text-base">
+							<i class="fas fa-phone-alt text-xs" aria-hidden="true"></i>
+							<?php echo esc_html($phone_number); ?>
+						</div>
+					</div>
+				</a>
+				<?php endif; ?>
 
 			</div>
 		</section>
@@ -253,6 +272,8 @@ $cartflow_order_cta = function ($direction = 'down', $wrap_class = 'mt-7') use (
 								<i class="fas fa-arrow-down" aria-hidden="true"></i>
 							</a>
 						</div>
+
+
 					</div>
 				</div>
 			</div>
@@ -517,10 +538,13 @@ $cartflow_order_cta = function ($direction = 'down', $wrap_class = 'mt-7') use (
 		</div>
 	</footer>
 
-	<?php if ($show_sticky && $sticky_bar): ?>
-		<div
-			class="fixed inset-x-0 bottom-0 z-40 flex items-center justify-center gap-2 bg-brand-dark px-4 py-2.5 text-center text-[13px] font-semibold text-white">
-			<span><?php echo wp_kses_post($sticky_bar); ?></span>
+	<?php if ($show_sticky && ($phone_number || $sticky_bar)): ?>
+		<div class="fixed inset-x-0 bottom-0 z-40 border-t border-gray-200 bg-white px-4 py-2 text-center shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
+			<a href="<?php echo $phone_href ? 'tel:' . esc_attr($phone_href) : '#fastest-cartflow-checkout'; ?>" title="<?php echo esc_attr($phone_number ?: $sticky_bar); ?>"
+				class="cartflow-sticky-call group inline-flex items-center justify-center gap-2 rounded-full border-2 border-brand-gold bg-white px-5 py-1.5 text-[13px] font-bold text-brand-dark transition-all duration-200 hover:bg-brand-gold hover:text-white">
+				<i class="cartflow-sticky-call__icon fas fa-phone-alt shrink-0 text-xs text-brand-gold transition-colors duration-200 group-hover:text-white" aria-hidden="true"></i>
+				<span><?php echo esc_html(preg_replace('/^[\s\x{2600}-\x{27BF}\x{1F300}-\x{1FAFF}\x{FE0F}\x{200D}]+/u', '', wp_strip_all_tags($sticky_bar ?: esc_html__('কল করে অর্ডার করুন: ', 'fastest_fj') . $phone_number))); ?></span>
+			</a>
 		</div>
 	<?php endif; ?>
 
